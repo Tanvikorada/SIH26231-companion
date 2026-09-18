@@ -43,7 +43,7 @@ export function classifySpotTest(calibratedColor: RGB, reagent: string): Classif
     return { result: "inconclusive", confidence: "low", notes: "Unknown Reagent" };
   }
 
-  let bestMatch = null;
+  let bestMatch: string | undefined = undefined;
   let minDeltaE = Infinity;
   let isPositive = false;
 
