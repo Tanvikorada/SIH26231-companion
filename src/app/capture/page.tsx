@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Upload, MapPin, Loader2, CheckCircle2, Scan, FileCode2, Crosshair, Cpu } from "lucide-react";
+import { ArrowLeft, Upload, MapPin, Loader2, CheckCircle2, Scan, FileCode2, Crosshair, Cpu, Camera } from "lucide-react";
 import { classifySpotTest, calibrateColor, generateSHA256 } from "@/lib/engine";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
