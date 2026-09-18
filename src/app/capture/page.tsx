@@ -11,7 +11,7 @@ export default function CapturePage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [reagent, setReagent] = useState("Marquis");
+  const [reagent, setReagent] = useState("Auto-Detect (Lateral Flow)");
   const [time, setTime] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -179,6 +179,8 @@ export default function CapturePage() {
                     onChange={(e) => setReagent(e.target.value)}
                     className="w-full p-4 bg-[#1E3E62]/30 border border-[#1E3E62] rounded-xl text-white appearance-none focus:outline-none focus:border-[#FF6500]"
                   >
+                    
+                    <option value="Auto-Detect (Lateral Flow)">Auto-Detect (Lateral Flow Cassette)</option>
                     <option value="Marquis">Marquis Reagent</option>
                     <option value="Ferric Sulfate">Ferric Sulfate</option>
                     <option value="Nitric Acid">Nitric Acid</option>

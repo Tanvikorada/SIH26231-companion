@@ -446,5 +446,19 @@
       174,
       161
     ]
+  },
+  {
+    "reagent": "Auto-Detect (Lateral Flow)",
+    "drug": "General Narcotic",
+    "positive_rgb": [
+      59,
+      125,
+      59
+    ],
+    "negative_rgb": [
+      217,
+      164,
+      65
+    ]
   }
 ]
