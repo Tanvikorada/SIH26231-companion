@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Test {
@@ -20,8 +21,4 @@ model Test {
   confidence         String
   calibration_status String
   notes              String?
-
-  @@index([captured_at(sort: Desc)])
-  @@index([operator_id])
-  @@index([result])
 }
