@@ -36,7 +36,7 @@ export default function RootLayout({
         
         <main className="pt-1.5 min-h-screen flex flex-col relative">
           {/* Subtle noise/grid background pattern for depth */}
-          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none mix-blend-overlay"></div>
+          <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-20 pointer-events-none mix-blend-overlay"></div>
           <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] opacity-30 pointer-events-none"></div>
           
           <div className="relative z-10 flex-1">
