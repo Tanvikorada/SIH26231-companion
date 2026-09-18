@@ -45,7 +45,7 @@ const POS_LAB = rgbToLabObject(POSITIVE_REFERENCE);
 const NEG_LAB = rgbToLabObject(NEGATIVE_REFERENCE);
 const BOUNDARY_LAB = rgbToLabObject(BOUNDARY_REFERENCE);
 
-const MAX_DELTA_E = 12;
+const MAX_DELTA_E = 35;
 
 export function classifyResult(calibratedColor: RGB): ClassificationResult {
   const lab = rgbToLabObject(calibratedColor);
