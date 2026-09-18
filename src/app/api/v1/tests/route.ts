@@ -110,8 +110,7 @@ export async function POST(req: Request) {
 
     const refStats = await image.extract({ left: refX - 10, top: refY - 10, width: 20, height: 20 }).stats();
     const testStats = await image.extract({ left: testX - 10, top: testY - 10, width: 20, height: 20 }).stats();
-    const testStats = await image.extract({ left: testX - 5, top: testY - 5, width: 10, height: 10 }).stats();
-
+    
     const capturedRef: RGB = { r: refStats.channels[0].mean, g: refStats.channels[1].mean, b: refStats.channels[2].mean };
     const capturedTest: RGB = { r: testStats.channels[0].mean, g: testStats.channels[1].mean, b: testStats.channels[2].mean };
 
