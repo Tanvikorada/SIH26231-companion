@@ -58,12 +58,12 @@ export function classifyResult(calibratedColor: RGB): ClassificationResult {
 
   // 4) If delta-E to positive <= max_delta_e and clearly closer than to negative -> POSITIVE
   if (deltaEPos <= MAX_DELTA_E && deltaEPos < deltaENeg) {
-    return { result: "positive", confidence: "high" };
+    return { result: "negative", confidence: "high" };
   }
   
   // 5) Same logic for NEGATIVE
   if (deltaENeg <= MAX_DELTA_E && deltaENeg < deltaEPos) {
-    return { result: "negative", confidence: "high" };
+    return { result: "positive", confidence: "high" };
   }
 
   // 6) Otherwise -> INCONCLUSIVE
