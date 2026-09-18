@@ -1,11 +1,11 @@
 {
-  "name": "Digital Companion",
-  "short_name": "Companion",
-  "description": "Digital Companion for Field Drug Testing",
+  "name": "NCB Field Scanner",
+  "short_name": "NCB Scanner",
+  "description": "Narcotics Control Bureau - Digital Companion for Field Drug Testing",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#0B1B3D",
+  "background_color": "#0B192C",
+  "theme_color": "#1E3E62",
   "icons": [
     {
       "src": "/icon-192.png",

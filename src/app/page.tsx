@@ -1,112 +1,63 @@
-import React from "react";
 import Link from "next/link";
-import { Camera, List, ShieldCheck, Activity, MapPin, Search } from "lucide-react";
-import { prisma } from "@/lib/prisma";
+import { Camera, ClipboardList, ShieldAlert } from "lucide-react";
+import * as motion from "framer-motion/client";
 
-export default async function Dashboard() {
-  const total = await prisma.test.count();
-  const positive = await prisma.test.count({ where: { result: "positive" } });
-  const negative = await prisma.test.count({ where: { result: "negative" } });
-  const inconclusive = await prisma.test.count({ where: { result: "inconclusive" } });
-
-  const recentTests = await prisma.test.findMany({
-    take: 3,
-    orderBy: { captured_at: 'desc' }
-  });
-
+export default function Home() {
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
-      {/* Header */}
-      <header className="bg-[var(--color-navy)] text-white pt-12 pb-8 px-6 shadow-md rounded-b-3xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 opacity-10 pointer-events-none">
-          <ShieldCheck size={200} className="text-white transform translate-x-1/4 -translate-y-1/4" />
-        </div>
-        <div className="relative z-10 flex flex-col gap-1">
-          <p className="text-[var(--color-brass)] text-xs font-bold tracking-widest uppercase">SatyaLabel Digital Companion</p>
-          <h1 className="text-3xl font-bold tracking-tight">Field Testing</h1>
-          <p className="text-blue-100 text-sm mt-1 opacity-90">Officer: OFC-104 • Active Shift</p>
-        </div>
-      </header>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[#0B192C] p-6 text-white text-center selection:bg-[#FF6500] selection:text-white relative overflow-hidden">
+      
+      {/* Background glow effects */}
+      <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-[#1E3E62] rounded-full blur-[120px] opacity-50 pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] bg-[#FF6500] rounded-full blur-[150px] opacity-20 pointer-events-none" />
 
-      <div className="flex-1 px-6 -mt-6 z-20 flex flex-col gap-6 pb-12">
-        {/* Primary Actions */}
-        <div className="grid grid-cols-2 gap-4">
-          <Link href="/capture" className="bg-white p-6 rounded-2xl flex flex-col items-center justify-center gap-3 shadow-lg border border-gray-100 active:scale-95 transition-transform group hover:border-[var(--color-navy)]">
-            <div className="w-14 h-14 rounded-full bg-blue-50 text-[var(--color-navy)] flex items-center justify-center group-hover:bg-[var(--color-navy)] group-hover:text-white transition-colors">
-              <Camera size={28} />
-            </div>
-            <span className="font-semibold text-gray-900 text-sm">New Test</span>
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="z-10 max-w-md w-full flex flex-col items-center"
+      >
+        <div className="mb-6 bg-[#1E3E62]/30 p-4 rounded-full border border-[#1E3E62]">
+          <ShieldAlert size={48} className="text-[#FF6500]" />
+        </div>
+        
+        <div className="space-y-2 mb-10">
+          <p className="text-[#FF6500] text-xs font-bold tracking-[0.2em] uppercase">Ministry of Home Affairs</p>
+          <h1 className="text-4xl font-extrabold tracking-tight">NCB Field Scanner</h1>
+          <p className="text-[#8b9bb4] text-sm max-w-xs mx-auto pt-2">
+            Secure, mathematically calibrated chemical spot test analysis.
+          </p>
+        </div>
+
+        <div className="w-full space-y-4">
+          <Link href="/capture" className="block w-full">
+            <motion.div 
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="group relative overflow-hidden flex items-center justify-center gap-3 w-full bg-[#FF6500] text-white px-6 py-4 rounded-xl font-bold shadow-[0_0_40px_-10px_#FF6500] hover:shadow-[0_0_60px_-15px_#FF6500] transition-all"
+            >
+              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+              <Camera size={22} className="relative z-10" />
+              <span className="relative z-10 text-lg tracking-wide">Initiate Scan</span>
+            </motion.div>
           </Link>
-          <Link href="/logs" className="bg-white p-6 rounded-2xl flex flex-col items-center justify-center gap-3 shadow-lg border border-gray-100 active:scale-95 transition-transform group hover:border-[var(--color-brass)]">
-            <div className="w-14 h-14 rounded-full bg-amber-50 text-[var(--color-brass)] flex items-center justify-center group-hover:bg-[var(--color-brass)] group-hover:text-white transition-colors">
-              <List size={28} />
-            </div>
-            <span className="font-semibold text-gray-900 text-sm">Case Logs</span>
+          
+          <Link href="/logs" className="block w-full">
+            <motion.div 
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="flex items-center justify-center gap-3 w-full bg-[#1E3E62]/40 backdrop-blur-md border border-[#1E3E62] text-white px-6 py-4 rounded-xl font-semibold hover:bg-[#1E3E62]/60 transition-all"
+            >
+              <ClipboardList size={20} className="text-[#8b9bb4]" />
+              <span className="tracking-wide">View Forensic Logs</span>
+            </motion.div>
           </Link>
         </div>
 
-        {/* Stats */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mt-2">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-bold text-gray-800 text-lg flex items-center gap-2">
-              <Activity size={18} className="text-[var(--color-brass)]" /> Shift Summary
-            </h2>
-          </div>
-          <div className="grid grid-cols-4 gap-2 text-center divide-x divide-gray-100">
-            <div className="px-2">
-              <p className="text-2xl font-bold text-gray-900">{total}</p>
-              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">Total</p>
-            </div>
-            <div className="px-2">
-              <p className="text-2xl font-bold text-red-600">{positive}</p>
-              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">Pos</p>
-            </div>
-            <div className="px-2">
-              <p className="text-2xl font-bold text-green-600">{negative}</p>
-              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">Neg</p>
-            </div>
-            <div className="px-2">
-              <p className="text-2xl font-bold text-yellow-600">{inconclusive}</p>
-              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">Inc</p>
-            </div>
-          </div>
+        <div className="mt-12 text-xs text-[#8b9bb4]/60 font-mono flex items-center gap-2">
+          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          SYSTEM ONLINE • ENCRYPTED
         </div>
-
-        {/* Recent Activity */}
-        <div className="space-y-4">
-          <div className="flex justify-between items-end">
-            <h2 className="font-bold text-gray-800 text-lg">Recent Scans</h2>
-            <Link href="/logs" className="text-xs font-bold text-[var(--color-navy)] uppercase tracking-wider hover:underline">View All</Link>
-          </div>
-          <div className="space-y-3">
-            {recentTests.map((t) => (
-              <Link href={`/logs/${t.id}`} key={t.id} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between active:scale-[0.98] transition-transform">
-                <div className="flex items-center gap-4">
-                  <div className={`w-3 h-12 rounded-full ${t.result === 'positive' ? 'bg-red-500' : t.result === 'negative' ? 'bg-green-500' : 'bg-yellow-500'}`} />
-                  <div>
-                    <p className="font-mono text-xs text-gray-500 mb-1">{t.id.split('-')[0]}</p>
-                    <p className="font-semibold text-gray-900 text-sm capitalize">{t.result} Result</p>
-                    {t.notes && (
-                      <p className="text-xs text-gray-500 flex items-center mt-1">
-                        <MapPin size={10} className="mr-1" /> {t.notes}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-xs font-medium text-gray-400">{t.captured_at.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
-                </div>
-              </Link>
-            ))}
-            {recentTests.length === 0 && (
-              <div className="text-center py-8 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-xl">
-                No tests logged this shift.
-              </div>
-            )}
-          </div>
-        </div>
-
-      </div>
+      </motion.div>
     </div>
   );
 }
