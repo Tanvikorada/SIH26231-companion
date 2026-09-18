@@ -114,7 +114,7 @@ export async function POST(req: Request) {
     const capturedRef: RGB = { r: refStats.channels[0].mean, g: refStats.channels[1].mean, b: refStats.channels[2].mean };
     const capturedTest: RGB = { r: testStats.channels[0].mean, g: testStats.channels[1].mean, b: testStats.channels[2].mean };
 
-    let calibration_status = detectedGray ? "calibrated" : "calibrated_fallback";
+    let calibration_status = detected ? "calibrated" : "calibrated_fallback";
     if (capturedRef.r < 10 && capturedRef.g < 10 && capturedRef.b < 10) {
       calibration_status = "failed_no_reference_card";
     }
