@@ -12,12 +12,12 @@ export default function Dashboard() {
     fetch("/api/v1/dashboard/stats").then(r => r.json()).then(setStats).catch(() => {});
   }, []);
 
-  const container = {
+  const container: any = {
     hidden: { opacity: 0 },
     show: { opacity: 1, transition: { staggerChildren: 0.1 } }
   };
 
-  const item = {
+  const item: any = {
     hidden: { opacity: 0, y: 20 },
     show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
   };
