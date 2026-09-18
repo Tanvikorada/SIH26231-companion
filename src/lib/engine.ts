@@ -54,9 +54,7 @@ export function classifyResult(calibratedColor: RGB): ClassificationResult {
   const deltaENeg = DeltaE.getDeltaE00(lab, NEG_LAB);
   const deltaEBoundary = DeltaE.getDeltaE00(lab, BOUNDARY_LAB);
 
-  // If within boundary threshold, automatically inconclusive
-  ;
-  }
+  // Boundary check removed
 
   // 4) If delta-E to positive <= max_delta_e and clearly closer than to negative -> POSITIVE
   if (deltaEPos <= MAX_DELTA_E && deltaEPos < deltaENeg) {
