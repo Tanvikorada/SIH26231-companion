@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Landmark, Printer, Download, ShieldCheck, ShieldAlert } from "lucide-react";
+import { ArrowLeft, Landmark, Printer, Download, ShieldCheck, ShieldAlert, Check } from "lucide-react";
 
 export default function ResultPage() {
   const { id } = useParams();
