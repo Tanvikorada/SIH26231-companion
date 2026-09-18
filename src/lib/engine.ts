@@ -1,90 +1,158 @@
-import convert from "color-convert";
-import DeltaE from "delta-e";
-import db from "./color_library.json";
+// Client-side forensic engine
+// Runs entirely on the device (Edge/Browser) for Zero-Trust architecture and offline capability
 
-export type RGB = { r: number; g: number; b: number };
-export type LAB = { L: number; A: number; B: number };
+export function rgb2lab(rgb: number[]) {
+  let r = rgb[0] / 255, g = rgb[1] / 255, b = rgb[2] / 255;
+  r = r > 0.04045 ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92;
+  g = g > 0.04045 ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92;
+  b = b > 0.04045 ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92;
 
-export type ClassificationResult = {
-  result: "positive" | "negative" | "inconclusive";
-  confidence: "high" | "estimated" | "low";
-  drugMatch?: string;
-  notes?: string;
-};
+  let x = (r * 0.4124 + g * 0.3576 + b * 0.1805) * 100;
+  let y = (r * 0.2126 + g * 0.7152 + b * 0.0722) * 100;
+  let z = (r * 0.0193 + g * 0.1192 + b * 0.9505) * 100;
 
-export const KNOWN_REFERENCE_COLOR: RGB = { r: 128, g: 128, b: 128 }; 
+  x /= 95.047;
+  y /= 100.000;
+  z /= 108.883;
 
-export function calibrateColor(capturedTestColor: RGB, capturedGrayColor: RGB): RGB {
-  const correctionFactor = {
-    r: KNOWN_REFERENCE_COLOR.r / (capturedGrayColor.r || 1),
-    g: KNOWN_REFERENCE_COLOR.g / (capturedGrayColor.g || 1),
-    b: KNOWN_REFERENCE_COLOR.b / (capturedGrayColor.b || 1),
-  };
+  x = x > 0.008856 ? Math.pow(x, 1 / 3) : (7.787 * x) + (16 / 116);
+  y = y > 0.008856 ? Math.pow(y, 1 / 3) : (7.787 * y) + (16 / 116);
+  z = z > 0.008856 ? Math.pow(z, 1 / 3) : (7.787 * z) + (16 / 116);
 
-  return {
-    r: Math.min(255, Math.round(capturedTestColor.r * correctionFactor.r)),
-    g: Math.min(255, Math.round(capturedTestColor.g * correctionFactor.g)),
-    b: Math.min(255, Math.round(capturedTestColor.b * correctionFactor.b)),
-  };
+  return [(116 * y) - 16, 500 * (x - y), 200 * (y - z)];
 }
 
-function rgbToLabObject(rgb: RGB): LAB {
-  const labArr = convert.rgb.lab([rgb.r, rgb.g, rgb.b]);
-  return { L: labArr[0], A: labArr[1], B: labArr[2] };
+export function deltaE00(lab1: number[], lab2: number[]) {
+  const L1 = lab1[0], a1 = lab1[1], b1 = lab1[2];
+  const L2 = lab2[0], a2 = lab2[1], b2 = lab2[2];
+  const weightL = 1, weightC = 1, weightH = 1;
+
+  const C1 = Math.sqrt(a1 * a1 + b1 * b1);
+  const C2 = Math.sqrt(a2 * a2 + b2 * b2);
+  const Cbar = (C1 + C2) / 2;
+  
+  const G = 0.5 * (1 - Math.sqrt(Math.pow(Cbar, 7) / (Math.pow(Cbar, 7) + Math.pow(25, 7))));
+  const a1prime = (1 + G) * a1;
+  const a2prime = (1 + G) * a2;
+  
+  const C1prime = Math.sqrt(a1prime * a1prime + b1 * b1);
+  const C2prime = Math.sqrt(a2prime * a2prime + b2 * b2);
+  const Cbarprime = (C1prime + C2prime) / 2;
+  
+  let h1prime = Math.atan2(b1, a1prime) * (180 / Math.PI);
+  if (h1prime < 0) h1prime += 360;
+  let h2prime = Math.atan2(b2, a2prime) * (180 / Math.PI);
+  if (h2prime < 0) h2prime += 360;
+  
+  let Hbarprime;
+  if (Math.abs(h1prime - h2prime) > 180) {
+      Hbarprime = (h1prime + h2prime + 360) / 2;
+  } else {
+      Hbarprime = (h1prime + h2prime) / 2;
+  }
+  
+  const T = 1 - 0.17 * Math.cos((Hbarprime - 30) * (Math.PI / 180))
+            + 0.24 * Math.cos((2 * Hbarprime) * (Math.PI / 180))
+            + 0.32 * Math.cos((3 * Hbarprime + 6) * (Math.PI / 180))
+            - 0.20 * Math.cos((4 * Hbarprime - 63) * (Math.PI / 180));
+            
+  let deltahprime;
+  if (Math.abs(h2prime - h1prime) <= 180) {
+      deltahprime = h2prime - h1prime;
+  } else if (h2prime <= h1prime) {
+      deltahprime = h2prime - h1prime + 360;
+  } else {
+      deltahprime = h2prime - h1prime - 360;
+  }
+  
+  const deltaLprime = L2 - L1;
+  const deltaCprime = C2prime - C1prime;
+  const deltaHprime = 2 * Math.sqrt(C1prime * C2prime) * Math.sin((deltahprime / 2) * (Math.PI / 180));
+  
+  const S_L = 1 + (0.015 * Math.pow(Lbarprime(L1, L2) - 50, 2)) / Math.sqrt(20 + Math.pow(Lbarprime(L1, L2) - 50, 2));
+  const S_C = 1 + 0.045 * Cbarprime;
+  const S_H = 1 + 0.015 * Cbarprime * T;
+  
+  const deltaTheta = 30 * Math.exp(-Math.pow((Hbarprime - 275) / 25, 2));
+  const R_C = 2 * Math.sqrt(Math.pow(Cbarprime, 7) / (Math.pow(Cbarprime, 7) + Math.pow(25, 7)));
+  const R_T = -Math.sin(2 * deltaTheta * (Math.PI / 180)) * R_C;
+  
+  const dE = Math.sqrt(
+      Math.pow(deltaLprime / (weightL * S_L), 2) +
+      Math.pow(deltaCprime / (weightC * S_C), 2) +
+      Math.pow(deltaHprime / (weightH * S_H), 2) +
+      R_T * (deltaCprime / (weightC * S_C)) * (deltaHprime / (weightH * S_H))
+  );
+  
+  return dE;
 }
 
-export function classifySpotTest(calibratedColor: RGB, reagent: string): ClassificationResult {
-  const sampleLab = rgbToLabObject(calibratedColor);
+function Lbarprime(L1: number, L2: number) {
+  return (L1 + L2) / 2;
+}
+
+export function calibrateColor(rawSpot: number[], rawWhite: number[]) {
+  const TARGET_WHITE = [255, 255, 255];
   
-  // Filter DB by reagent
-  const tests = db.filter(t => t.reagent.toLowerCase() === reagent.toLowerCase());
+  const lumaSpot = (rawSpot[0]*0.299 + rawSpot[1]*0.587 + rawSpot[2]*0.114);
+  const lumaWhite = (rawWhite[0]*0.299 + rawWhite[1]*0.587 + rawWhite[2]*0.114);
   
-  if (tests.length === 0) {
-    return { result: "inconclusive", confidence: "low", notes: "Unknown Reagent" };
+  if (lumaWhite < 50) return rawSpot; // Way too dark, ignore
+
+  const scaleR = TARGET_WHITE[0] / Math.max(1, rawWhite[0]);
+  const scaleG = TARGET_WHITE[1] / Math.max(1, rawWhite[1]);
+  const scaleB = TARGET_WHITE[2] / Math.max(1, rawWhite[2]);
+
+  return [
+    Math.min(255, Math.max(0, Math.round(rawSpot[0] * scaleR))),
+    Math.min(255, Math.max(0, Math.round(rawSpot[1] * scaleG))),
+    Math.min(255, Math.max(0, Math.round(rawSpot[2] * scaleB)))
+  ];
+}
+
+import library from "./color_library.json";
+
+export function classifySpotTest(testRGB: number[], reagent: string) {
+  const targetProfiles = library.filter((r: any) => r.reagent === reagent);
+  
+  if (targetProfiles.length === 0) {
+    return { result: "inconclusive", distance: 999 };
   }
 
-  let bestMatch: string | undefined = undefined;
-  let minDeltaE = Infinity;
-  let isPositive = false;
+  const testLab = rgb2lab(testRGB);
+  let bestMatch = "inconclusive";
+  let minDistance = 999;
+  
+  // We use a strict tolerance for Government forensics
+  const TOLERANCE = 15.0;
 
-  for (const test of tests) {
-    const posLab = rgbToLabObject({ r: test.positive_rgb[0], g: test.positive_rgb[1], b: test.positive_rgb[2] });
-    const negLab = rgbToLabObject({ r: test.negative_rgb[0], g: test.negative_rgb[1], b: test.negative_rgb[2] });
+  for (const profile of targetProfiles) {
+    const posLab = rgb2lab(profile.positive_rgb);
+    const negLab = rgb2lab(profile.negative_rgb);
     
-    const dPos = DeltaE.getDeltaE00(sampleLab, posLab);
-    const dNeg = DeltaE.getDeltaE00(sampleLab, negLab);
-
-    if (dPos < minDeltaE) {
-      minDeltaE = dPos;
-      bestMatch = test.drug;
-      isPositive = true;
+    const dPos = deltaE00(testLab, posLab);
+    const dNeg = deltaE00(testLab, negLab);
+    
+    if (dPos < minDistance && dPos < TOLERANCE) {
+      minDistance = dPos;
+      bestMatch = "positive";
     }
-    if (dNeg < minDeltaE) {
-      minDeltaE = dNeg;
-      bestMatch = test.drug; // It's negative for this drug, or just baseline negative
-      isPositive = false;
+    
+    if (dNeg < minDistance && dNeg < TOLERANCE) {
+      minDistance = dNeg;
+      bestMatch = "negative";
     }
   }
 
-  // Thresholds
-  const MAX_CONFIDENT_DELTA = 15;
-  const MAX_ACCEPTABLE_DELTA = 30;
-
-  if (minDeltaE <= MAX_CONFIDENT_DELTA) {
-    return {
-      result: isPositive ? "positive" : "negative",
-      confidence: "high",
-      drugMatch: isPositive ? bestMatch : undefined,
-      notes: isPositive ? `Detected ${bestMatch} via ${reagent} test` : `Negative reaction for ${reagent} test`
-    };
-  } else if (minDeltaE <= MAX_ACCEPTABLE_DELTA) {
-    return {
-      result: isPositive ? "positive" : "negative",
-      confidence: "estimated",
-      drugMatch: isPositive ? bestMatch : undefined,
-      notes: isPositive ? `Possible ${bestMatch} trace detected` : `Presumed negative`
-    };
+  if (minDistance >= TOLERANCE) {
+    return { result: "inconclusive", distance: minDistance };
   }
 
-  return { result: "inconclusive", confidence: "low", notes: "Color did not match any known reaction" };
+  return { result: bestMatch, distance: minDistance };
+}
+
+export async function generateSHA256(buffer: ArrayBuffer) {
+  const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
