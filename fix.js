@@ -1,4 +1,5 @@
-import React from "react";
+const fs = require("fs");
+const content = `import React from "react";
 import { prisma } from "@/lib/prisma";
 import { StampBadge } from "@/components/ui/StampBadge";
 import Link from "next/link";
@@ -80,7 +81,7 @@ async function ResultContent({ id }: { id: string }) {
           <p className="text-xs font-mono text-gray-700 break-all">{test.image_hash}</p>
         </div>
 
-        <Link href={`/logs/${test.id}`} className="flex items-center justify-between w-full py-4 px-2 text-[var(--color-navy)] hover:opacity-70 transition-opacity">
+        <Link href={\`/logs/\${test.id}\`} className="flex items-center justify-between w-full py-4 px-2 text-[var(--color-navy)] hover:opacity-70 transition-opacity">
           <span className="font-bold text-sm">View Full Tamper-Evident Dossier</span>
           <ChevronRight size={18} />
         </Link>
@@ -88,3 +89,5 @@ async function ResultContent({ id }: { id: string }) {
     </div>
   );
 }
+`;
+fs.writeFileSync("src/app/result/[id]/page.tsx", content);
