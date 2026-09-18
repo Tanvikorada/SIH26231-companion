@@ -113,13 +113,18 @@ export async function POST(req: Request) {
       confidence = classification.confidence;
     }
 
-    const fileName = `${image_hash}.jpg`;
-    await sharp(imageBuffer).toFile(`./public/uploads/${fileName}`);
+    // In Vercel serverless, we cannot write to disk. 
+    // We'll compress the image and store it as a Base64 string directly in the database.
+    const compressedBuffer = await sharp(imageBuffer)
+      .resize({ width: 800 }) // compress for DB storage
+      .jpeg({ quality: 75 })
+      .toBuffer();
+    const base64Image = `data:image/jpeg;base64,${compressedBuffer.toString("base64")}`;
 
     const testRecord = await prisma.test.create({
       data: {
         operator_id,
-        image_path: `/uploads/${fileName}`,
+        image_path: base64Image,
         image_hash,
         gps_lat: gps_lat ? parseFloat(gps_lat) : null,
         gps_lng: gps_lng ? parseFloat(gps_lng) : null,
