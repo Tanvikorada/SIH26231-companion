@@ -1,63 +1,133 @@
-import Link from "next/link";
-import { Camera, ClipboardList, ShieldAlert } from "lucide-react";
-import * as motion from "framer-motion/client";
+"use client";
 
-export default function Home() {
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import { Fingerprint, ShieldCheck, Terminal, Cpu } from "lucide-react";
+
+const BOOT_LOGS = [
+  "INITIALIZING KERNEL...",
+  "MOUNTING ENCRYPTED VOLUMES...",
+  "ESTABLISHING SECURE CONNECTION TO NCB MAINNET...",
+  "VERIFYING CRYPTOGRAPHIC KEYS...",
+  "LOADING CIEDE2000 SPECTRAL ENGINE...",
+  "CONNECTING TO GLOBAL SPOT TEST DATABASE...",
+  "SYSTEM ONLINE. WAITING FOR OPERATOR AUTHENTICATION."
+];
+
+export default function BootScreen() {
+  const router = useRouter();
+  const [logs, setLogs] = useState<string[]>([]);
+  const [authStatus, setAuthStatus] = useState<"waiting" | "scanning" | "granted">("waiting");
+
+  useEffect(() => {
+    let delay = 0;
+    BOOT_LOGS.forEach((log, index) => {
+      delay += Math.random() * 300 + 200;
+      setTimeout(() => {
+        setLogs((prev) => [...prev, log]);
+      }, delay);
+    });
+  }, []);
+
+  const handleAuth = () => {
+    if (authStatus !== "waiting") return;
+    setAuthStatus("scanning");
+    
+    setTimeout(() => {
+      setAuthStatus("granted");
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 1500);
+    }, 2000);
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#0B192C] p-6 text-white text-center selection:bg-[#FF6500] selection:text-white relative overflow-hidden">
+    <div className="min-h-screen bg-[#050505] text-[#00FF9D] font-mono flex flex-col items-center justify-center relative overflow-hidden selection:bg-[#00FF9D] selection:text-black">
       
-      {/* Background glow effects */}
-      <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-[#1E3E62] rounded-full blur-[120px] opacity-50 pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] bg-[#FF6500] rounded-full blur-[150px] opacity-20 pointer-events-none" />
+      {/* Matrix / Grid Background */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,157,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,157,0.03)_1px,transparent_1px)] bg-[size:30px_30px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
 
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="z-10 max-w-md w-full flex flex-col items-center"
-      >
-        <div className="mb-6 bg-[#1E3E62]/30 p-4 rounded-full border border-[#1E3E62]">
-          <ShieldAlert size={48} className="text-[#FF6500]" />
-        </div>
+      {/* Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#00FF9D] rounded-full blur-[150px] opacity-10 pointer-events-none" />
+
+      <div className="z-10 flex flex-col items-center w-full max-w-md p-6">
         
-        <div className="space-y-2 mb-10">
-          <p className="text-[#FF6500] text-xs font-bold tracking-[0.2em] uppercase">Ministry of Home Affairs</p>
-          <h1 className="text-4xl font-extrabold tracking-tight">NCB Field Scanner</h1>
-          <p className="text-[#8b9bb4] text-sm max-w-xs mx-auto pt-2">
-            Secure, mathematically calibrated chemical spot test analysis.
-          </p>
+        {/* Terminal Boot Sequence */}
+        <div className="w-full h-48 bg-black/50 border border-[#00FF9D]/20 rounded-lg p-4 mb-12 flex flex-col justify-end overflow-hidden backdrop-blur-sm shadow-[0_0_30px_-5px_rgba(0,255,157,0.1)]">
+          <div className="flex items-center gap-2 mb-2 text-[#00FF9D]/50 border-b border-[#00FF9D]/20 pb-2">
+            <Terminal size={14} />
+            <span className="text-[10px] tracking-widest">SYSTEM BOOT LOG</span>
+          </div>
+          <div className="flex flex-col gap-1">
+            {logs.map((log, i) => (
+              <motion.div 
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                key={i} 
+                className="text-xs text-[#00FF9D]/80"
+              >
+                <span className="text-[#00FF9D]/40 mr-2">{'>'}</span>{log}
+              </motion.div>
+            ))}
+            {logs.length < BOOT_LOGS.length && (
+              <div className="w-2 h-3 bg-[#00FF9D] animate-pulse mt-1" />
+            )}
+          </div>
         </div>
 
-        <div className="w-full space-y-4">
-          <Link href="/capture" className="block w-full">
+        {/* Biometric Scanner */}
+        <AnimatePresence mode="wait">
+          {logs.length === BOOT_LOGS.length && (
             <motion.div 
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="group relative overflow-hidden flex items-center justify-center gap-3 w-full bg-[#FF6500] text-white px-6 py-4 rounded-xl font-bold shadow-[0_0_40px_-10px_#FF6500] hover:shadow-[0_0_60px_-15px_#FF6500] transition-all"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="flex flex-col items-center"
             >
-              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
-              <Camera size={22} className="relative z-10" />
-              <span className="relative z-10 text-lg tracking-wide">Initiate Scan</span>
-            </motion.div>
-          </Link>
-          
-          <Link href="/logs" className="block w-full">
-            <motion.div 
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="flex items-center justify-center gap-3 w-full bg-[#1E3E62]/40 backdrop-blur-md border border-[#1E3E62] text-white px-6 py-4 rounded-xl font-semibold hover:bg-[#1E3E62]/60 transition-all"
-            >
-              <ClipboardList size={20} className="text-[#8b9bb4]" />
-              <span className="tracking-wide">View Forensic Logs</span>
-            </motion.div>
-          </Link>
-        </div>
+              <button 
+                onClick={handleAuth}
+                className="relative group cursor-pointer"
+              >
+                <div className={`w-32 h-32 rounded-full border border-[#00FF9D]/30 flex items-center justify-center bg-[#00FF9D]/5 backdrop-blur-md transition-all duration-500 ${
+                  authStatus === "scanning" ? "shadow-[0_0_50px_rgba(0,255,157,0.4)] border-[#00FF9D]" : 
+                  authStatus === "granted" ? "bg-[#00FF9D]/20 shadow-[0_0_100px_rgba(0,255,157,0.6)] border-[#00FF9D]" :
+                  "hover:bg-[#00FF9D]/10 hover:border-[#00FF9D]/60 hover:shadow-[0_0_30px_rgba(0,255,157,0.2)]"
+                }`}>
+                  {authStatus === "granted" ? (
+                    <ShieldCheck size={48} className="text-[#00FF9D]" />
+                  ) : (
+                    <Fingerprint size={48} className={`text-[#00FF9D] transition-all duration-300 ${authStatus === "scanning" ? "animate-pulse" : "group-hover:scale-110"}`} />
+                  )}
+                </div>
+                
+                {authStatus === "scanning" && (
+                  <motion.div 
+                    animate={{ y: [0, 128, 0] }}
+                    transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+                    className="absolute top-0 left-0 w-full h-1 bg-[#00FF9D] shadow-[0_0_15px_#00FF9D] rounded-full"
+                  />
+                )}
+              </button>
 
-        <div className="mt-12 text-xs text-[#8b9bb4]/60 font-mono flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          SYSTEM ONLINE • ENCRYPTED
+              <div className="mt-8 text-center h-8">
+                {authStatus === "waiting" && <p className="text-sm tracking-widest animate-pulse">PRESS TO AUTHENTICATE</p>}
+                {authStatus === "scanning" && <p className="text-sm tracking-widest text-[#00FF9D]">SCANNING BIOMETRICS...</p>}
+                {authStatus === "granted" && <p className="text-sm tracking-widest text-white font-bold bg-[#00FF9D] text-black px-4 py-1 rounded">ACCESS GRANTED</p>}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+      </div>
+      
+      {/* Footer Branding */}
+      <div className="absolute bottom-6 flex flex-col items-center gap-1 opacity-50">
+        <div className="flex items-center gap-2">
+          <Cpu size={14} />
+          <span className="text-[10px] tracking-[0.3em] font-bold">MINISTRY OF HOME AFFAIRS</span>
         </div>
-      </motion.div>
+        <span className="text-[8px] tracking-widest">NARCOTICS CONTROL BUREAU FORENSIC DIVISION</span>
+      </div>
     </div>
   );
 }
