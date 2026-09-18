@@ -1,0 +1,450 @@
+[
+  {
+    "reagent": "Marquis",
+    "drug": "Morphine Sulfate",
+    "positive_rgb": [
+      16,
+      6,
+      13
+    ],
+    "negative_rgb": [
+      215,
+      209,
+      199
+    ]
+  },
+  {
+    "reagent": "Ferric",
+    "drug": "Sulfate Morphine Sulfate",
+    "positive_rgb": [
+      129,
+      127,
+      102
+    ],
+    "negative_rgb": [
+      213,
+      200,
+      165
+    ]
+  },
+  {
+    "reagent": "Nitric",
+    "drug": "Acid Morphine Sulfate",
+    "positive_rgb": [
+      190,
+      109,
+      11
+    ],
+    "negative_rgb": [
+      181,
+      174,
+      169
+    ]
+  },
+  {
+    "reagent": "Marquis",
+    "drug": "Codeine",
+    "positive_rgb": [
+      25,
+      11,
+      23
+    ],
+    "negative_rgb": [
+      177,
+      171,
+      167
+    ]
+  },
+  {
+    "reagent": "Ferric",
+    "drug": "Sulfate Codeine",
+    "positive_rgb": [
+      181,
+      159,
+      97
+    ],
+    "negative_rgb": [
+      176,
+      163,
+      132
+    ]
+  },
+  {
+    "reagent": "Nitric",
+    "drug": "Acid Codeine",
+    "positive_rgb": [
+      184,
+      184,
+      98
+    ],
+    "negative_rgb": [
+      217,
+      210,
+      209
+    ]
+  },
+  {
+    "reagent": "Marquis",
+    "drug": "Heroin",
+    "positive_rgb": [
+      17,
+      7,
+      14
+    ],
+    "negative_rgb": [
+      165,
+      161,
+      156
+    ]
+  },
+  {
+    "reagent": "Ferric",
+    "drug": "Sulfate Heroin",
+    "positive_rgb": [
+      161,
+      151,
+      111
+    ],
+    "negative_rgb": [
+      173,
+      162,
+      136
+    ]
+  },
+  {
+    "reagent": "Nitric",
+    "drug": "Acid Heroin",
+    "positive_rgb": [
+      191,
+      186,
+      152
+    ],
+    "negative_rgb": [
+      176,
+      171,
+      170
+    ]
+  },
+  {
+    "reagent": "Wagner",
+    "drug": "Cocaine HCl",
+    "positive_rgb": [
+      38,
+      10,
+      8
+    ],
+    "negative_rgb": [
+      134,
+      47,
+      9
+    ]
+  },
+  {
+    "reagent": "Cobalt",
+    "drug": "Thiocyanate Cocaine HCl",
+    "positive_rgb": [
+      2,
+      65,
+      121
+    ],
+    "negative_rgb": [
+      194,
+      146,
+      158
+    ]
+  },
+  {
+    "reagent": "Marquis",
+    "drug": "Diazepam",
+    "positive_rgb": [
+      163,
+      156,
+      132
+    ],
+    "negative_rgb": [
+      168,
+      162,
+      154
+    ]
+  },
+  {
+    "reagent": "Marquis",
+    "drug": "Methadone",
+    "positive_rgb": [
+      168,
+      160,
+      142
+    ],
+    "negative_rgb": [
+      178,
+      173,
+      168
+    ]
+  },
+  {
+    "reagent": "Chen",
+    "drug": "Kao Cathine",
+    "positive_rgb": [
+      133,
+      133,
+      114
+    ],
+    "negative_rgb": [
+      148,
+      147,
+      137
+    ]
+  },
+  {
+    "reagent": "Marquis",
+    "drug": "Opium",
+    "positive_rgb": [
+      139,
+      117,
+      89
+    ],
+    "negative_rgb": [
+      168,
+      162,
+      149
+    ]
+  },
+  {
+    "reagent": "Ferric",
+    "drug": "Sulfate Opium",
+    "positive_rgb": [
+      173,
+      153,
+      106
+    ],
+    "negative_rgb": [
+      177,
+      166,
+      130
+    ]
+  },
+  {
+    "reagent": "Dille-Koppanyi",
+    "drug": "Phenobarbital",
+    "positive_rgb": [
+      181,
+      143,
+      186
+    ],
+    "negative_rgb": [
+      182,
+      175,
+      176
+    ]
+  },
+  {
+    "reagent": "Marquis",
+    "drug": "Amphetamine",
+    "positive_rgb": [
+      139,
+      48,
+      14
+    ],
+    "negative_rgb": [
+      182,
+      173,
+      157
+    ]
+  },
+  {
+    "reagent": "Sulfuric",
+    "drug": "Acid Amphetamine",
+    "positive_rgb": [
+      180,
+      170,
+      150
+    ],
+    "negative_rgb": [
+      210,
+      199,
+      180
+    ]
+  },
+  {
+    "reagent": "Simon",
+    "drug": "Test Amphetamine",
+    "positive_rgb": [
+      190,
+      163,
+      162
+    ],
+    "negative_rgb": [
+      196,
+      177,
+      128
+    ]
+  },
+  {
+    "reagent": "Marquis",
+    "drug": "Methamphetamine",
+    "positive_rgb": [
+      137,
+      53,
+      17
+    ],
+    "negative_rgb": [
+      169,
+      157,
+      136
+    ]
+  },
+  {
+    "reagent": "Sulfuric",
+    "drug": "Acid Methamphetamine",
+    "positive_rgb": [
+      178,
+      168,
+      149
+    ],
+    "negative_rgb": [
+      178,
+      170,
+      158
+    ]
+  },
+  {
+    "reagent": "Simon",
+    "drug": "Test Methamphetamine",
+    "positive_rgb": [
+      198,
+      180,
+      149
+    ],
+    "negative_rgb": [
+      172,
+      152,
+      107
+    ]
+  },
+  {
+    "reagent": "Marquis",
+    "drug": "Mescaline",
+    "positive_rgb": [
+      188,
+      64,
+      10
+    ],
+    "negative_rgb": [
+      191,
+      178,
+      160
+    ]
+  },
+  {
+    "reagent": "Liebermann",
+    "drug": "Mescaline",
+    "positive_rgb": [
+      11,
+      10,
+      12
+    ],
+    "negative_rgb": [
+      162,
+      159,
+      151
+    ]
+  },
+  {
+    "reagent": "Marquis",
+    "drug": "Fentanyl",
+    "positive_rgb": [
+      185,
+      135,
+      26
+    ],
+    "negative_rgb": [
+      176,
+      161,
+      141
+    ]
+  },
+  {
+    "reagent": "Marquis",
+    "drug": "Meperidine",
+    "positive_rgb": [
+      178,
+      132,
+      31
+    ],
+    "negative_rgb": [
+      165,
+      153,
+      130
+    ]
+  },
+  {
+    "reagent": "Liebermann",
+    "drug": "Meperidine",
+    "positive_rgb": [
+      178,
+      70,
+      8
+    ],
+    "negative_rgb": [
+      210,
+      206,
+      199
+    ]
+  },
+  {
+    "reagent": "Dille-Koppanyi",
+    "drug": "Pentobarbital",
+    "positive_rgb": [
+      184,
+      151,
+      194
+    ],
+    "negative_rgb": [
+      188,
+      183,
+      178
+    ]
+  },
+  {
+    "reagent": "Scott",
+    "drug": "Cocaine HCl",
+    "positive_rgb": [
+      106,
+      143,
+      153
+    ],
+    "negative_rgb": [
+      194,
+      171,
+      164
+    ]
+  },
+  {
+    "reagent": "Cobalt",
+    "drug": "Thiocyanate PCP",
+    "positive_rgb": [
+      27,
+      90,
+      141
+    ],
+    "negative_rgb": [
+      188,
+      132,
+      145
+    ]
+  },
+  {
+    "reagent": "Scott",
+    "drug": "Cocaine Base",
+    "positive_rgb": [
+      91,
+      160,
+      170
+    ],
+    "negative_rgb": [
+      179,
+      174,
+      161
+    ]
+  }
+]

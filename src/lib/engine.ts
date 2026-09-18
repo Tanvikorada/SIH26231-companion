@@ -1,5 +1,6 @@
 import convert from "color-convert";
 import DeltaE from "delta-e";
+import db from "./color_library.json";
 
 export type RGB = { r: number; g: number; b: number };
 export type LAB = { L: number; A: number; B: number };
@@ -7,16 +8,12 @@ export type LAB = { L: number; A: number; B: number };
 export type ClassificationResult = {
   result: "positive" | "negative" | "inconclusive";
   confidence: "high" | "estimated" | "low";
+  drugMatch?: string;
+  notes?: string;
 };
 
-// Extracted from user's kit profile JSON
-export const KNOWN_REFERENCE_COLOR: RGB = { r: 128, g: 128, b: 128 }; // gray18
-const WHITE_REFERENCE: RGB = { r: 255, g: 255, b: 255 }; // white
+export const KNOWN_REFERENCE_COLOR: RGB = { r: 128, g: 128, b: 128 }; 
 
-// We use both white and gray to roughly correct. For simplicity based on prompt: 
-// "after white-balance correction using the card's white/gray patches"
-// I will just use gray18 for standard exposure reference as I previously did,
-// or calculate an average factor. Let's stick to gray18 for now.
 export function calibrateColor(capturedTestColor: RGB, capturedGrayColor: RGB): RGB {
   const correctionFactor = {
     r: KNOWN_REFERENCE_COLOR.r / (capturedGrayColor.r || 1),
@@ -36,36 +33,58 @@ function rgbToLabObject(rgb: RGB): LAB {
   return { L: labArr[0], A: labArr[1], B: labArr[2] };
 }
 
-// User's JSON data true colors
-const POSITIVE_REFERENCE: RGB = { r: 59, g: 125, b: 59 }; // #3B7D3B
-const NEGATIVE_REFERENCE: RGB = { r: 217, g: 164, b: 65 }; // #D9A441
-const BOUNDARY_REFERENCE: RGB = { r: 143, g: 165, b: 92 }; // #8FA55C
-
-const POS_LAB = rgbToLabObject(POSITIVE_REFERENCE);
-const NEG_LAB = rgbToLabObject(NEGATIVE_REFERENCE);
-const BOUNDARY_LAB = rgbToLabObject(BOUNDARY_REFERENCE);
-
-const MAX_DELTA_E = 35;
-
-export function classifyResult(calibratedColor: RGB): ClassificationResult {
-  const lab = rgbToLabObject(calibratedColor);
-
-  const deltaEPos = DeltaE.getDeltaE00(lab, POS_LAB);
-  const deltaENeg = DeltaE.getDeltaE00(lab, NEG_LAB);
-  const deltaEBoundary = DeltaE.getDeltaE00(lab, BOUNDARY_LAB);
-
-  // Boundary check removed
-
-  // 4) If delta-E to positive <= max_delta_e and clearly closer than to negative -> POSITIVE
-  if (deltaEPos <= MAX_DELTA_E && deltaEPos < deltaENeg) {
-    return { result: "negative", confidence: "high" };
-  }
+export function classifySpotTest(calibratedColor: RGB, reagent: string): ClassificationResult {
+  const sampleLab = rgbToLabObject(calibratedColor);
   
-  // 5) Same logic for NEGATIVE
-  if (deltaENeg <= MAX_DELTA_E && deltaENeg < deltaEPos) {
-    return { result: "positive", confidence: "high" };
+  // Filter DB by reagent
+  const tests = db.filter(t => t.reagent.toLowerCase() === reagent.toLowerCase());
+  
+  if (tests.length === 0) {
+    return { result: "inconclusive", confidence: "low", notes: "Unknown Reagent" };
   }
 
-  // 6) Otherwise -> INCONCLUSIVE
-  return { result: "inconclusive", confidence: "low" };
+  let bestMatch = null;
+  let minDeltaE = Infinity;
+  let isPositive = false;
+
+  for (const test of tests) {
+    const posLab = rgbToLabObject({ r: test.positive_rgb[0], g: test.positive_rgb[1], b: test.positive_rgb[2] });
+    const negLab = rgbToLabObject({ r: test.negative_rgb[0], g: test.negative_rgb[1], b: test.negative_rgb[2] });
+    
+    const dPos = DeltaE.getDeltaE00(sampleLab, posLab);
+    const dNeg = DeltaE.getDeltaE00(sampleLab, negLab);
+
+    if (dPos < minDeltaE) {
+      minDeltaE = dPos;
+      bestMatch = test.drug;
+      isPositive = true;
+    }
+    if (dNeg < minDeltaE) {
+      minDeltaE = dNeg;
+      bestMatch = test.drug; // It's negative for this drug, or just baseline negative
+      isPositive = false;
+    }
+  }
+
+  // Thresholds
+  const MAX_CONFIDENT_DELTA = 15;
+  const MAX_ACCEPTABLE_DELTA = 30;
+
+  if (minDeltaE <= MAX_CONFIDENT_DELTA) {
+    return {
+      result: isPositive ? "positive" : "negative",
+      confidence: "high",
+      drugMatch: isPositive ? bestMatch : undefined,
+      notes: isPositive ? `Detected ${bestMatch} via ${reagent} test` : `Negative reaction for ${reagent} test`
+    };
+  } else if (minDeltaE <= MAX_ACCEPTABLE_DELTA) {
+    return {
+      result: isPositive ? "positive" : "negative",
+      confidence: "estimated",
+      drugMatch: isPositive ? bestMatch : undefined,
+      notes: isPositive ? `Possible ${bestMatch} trace detected` : `Presumed negative`
+    };
+  }
+
+  return { result: "inconclusive", confidence: "low", notes: "Color did not match any known reaction" };
 }

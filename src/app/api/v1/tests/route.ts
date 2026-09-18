@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import crypto from "crypto";
 import sharp from "sharp";
-import { calibrateColor, classifyResult, RGB } from "@/lib/engine";
+import { calibrateColor, classifySpotTest, RGB } from "@/lib/engine";
 
 // Helper to find the 18% Gray patch by first finding the pure Red patch of the calibration card
 function findReferenceGray(buffer: Buffer, width: number, height: number): { x: number, y: number, refX: number, refY: number, orientation: string } | null {
@@ -124,7 +124,10 @@ export async function POST(req: Request) {
 
     if (calibration_status.startsWith("calibrated")) {
       const calibratedTest = calibrateColor(capturedTest, capturedRef);
-      const classification = classifyResult(calibratedTest);
+      
+      const reagent = formData.get("reagent")?.toString() || "Marquis";
+      const classification = classifySpotTest(calibratedTest, reagent);
+
       result = classification.result;
       confidence = classification.confidence;
     }
