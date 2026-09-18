@@ -1,133 +1,139 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
-import { Fingerprint, ShieldCheck, Terminal, Cpu } from "lucide-react";
+import { Landmark, Fingerprint, Shield, Phone, Building } from "lucide-react";
 
-const BOOT_LOGS = [
-  "INITIALIZING KERNEL...",
-  "MOUNTING ENCRYPTED VOLUMES...",
-  "ESTABLISHING SECURE CONNECTION TO NCB MAINNET...",
-  "VERIFYING CRYPTOGRAPHIC KEYS...",
-  "LOADING CIEDE2000 SPECTRAL ENGINE...",
-  "CONNECTING TO GLOBAL SPOT TEST DATABASE...",
-  "SYSTEM ONLINE. WAITING FOR OPERATOR AUTHENTICATION."
-];
-
-export default function BootScreen() {
+export default function LoginPage() {
   const router = useRouter();
-  const [logs, setLogs] = useState<string[]>([]);
-  const [authStatus, setAuthStatus] = useState<"waiting" | "scanning" | "granted">("waiting");
+  const [tab, setTab] = useState("officer");
+  const [captcha, setCaptcha] = useState("");
+  
+  const expectedCaptcha = "x7K9p";
 
-  useEffect(() => {
-    let delay = 0;
-    BOOT_LOGS.forEach((log, index) => {
-      delay += Math.random() * 300 + 200;
-      setTimeout(() => {
-        setLogs((prev) => [...prev, log]);
-      }, delay);
-    });
-  }, []);
-
-  const handleAuth = () => {
-    if (authStatus !== "waiting") return;
-    setAuthStatus("scanning");
-    
-    setTimeout(() => {
-      setAuthStatus("granted");
-      setTimeout(() => {
-        router.push("/dashboard");
-      }, 1500);
-    }, 2000);
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (captcha.toLowerCase() !== expectedCaptcha.toLowerCase()) {
+      alert("Invalid CAPTCHA");
+      return;
+    }
+    router.push("/dashboard");
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-[#00FF9D] font-mono flex flex-col items-center justify-center relative overflow-hidden selection:bg-[#00FF9D] selection:text-black">
+    <div className="min-h-screen flex flex-col bg-[#F5F5F5] font-sans pt-1">
       
-      {/* Matrix / Grid Background */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,157,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,157,0.03)_1px,transparent_1px)] bg-[size:30px_30px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
+      {/* Official Header */}
+      <header className="bg-[#003366] text-white p-4 shadow-md flex justify-between items-center relative z-10">
+        <div className="flex items-center gap-3">
+          <div className="flex flex-col items-center justify-center bg-white p-1 rounded-sm w-10 h-12">
+            <Landmark size={24} className="text-[#003366]" />
+            <span className="text-[6px] text-black font-bold mt-0.5">सत्यमेव जयते</span>
+          </div>
+          <div>
+            <h1 className="text-sm font-bold tracking-wide">Narcotics Control Bureau</h1>
+            <h2 className="text-[10px] text-gray-300">Ministry of Home Affairs, Government of India</h2>
+          </div>
+        </div>
+      </header>
 
-      {/* Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#00FF9D] rounded-full blur-[150px] opacity-10 pointer-events-none" />
-
-      <div className="z-10 flex flex-col items-center w-full max-w-md p-6">
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col items-center justify-center p-4">
         
-        {/* Terminal Boot Sequence */}
-        <div className="w-full h-48 bg-black/50 border border-[#00FF9D]/20 rounded-lg p-4 mb-12 flex flex-col justify-end overflow-hidden backdrop-blur-sm shadow-[0_0_30px_-5px_rgba(0,255,157,0.1)]">
-          <div className="flex items-center gap-2 mb-2 text-[#00FF9D]/50 border-b border-[#00FF9D]/20 pb-2">
-            <Terminal size={14} />
-            <span className="text-[10px] tracking-widest">SYSTEM BOOT LOG</span>
+        <div className="w-full max-w-md bg-white border border-gray-300 shadow-lg rounded-sm overflow-hidden">
+          
+          <div className="bg-gray-100 p-4 border-b border-gray-300 flex items-center gap-2">
+            <Shield size={18} className="text-[#003366]" />
+            <h3 className="font-bold text-[#003366]">Official Personnel Login</h3>
           </div>
-          <div className="flex flex-col gap-1">
-            {logs.map((log, i) => (
-              <motion.div 
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                key={i} 
-                className="text-xs text-[#00FF9D]/80"
-              >
-                <span className="text-[#00FF9D]/40 mr-2">{'>'}</span>{log}
-              </motion.div>
-            ))}
-            {logs.length < BOOT_LOGS.length && (
-              <div className="w-2 h-3 bg-[#00FF9D] animate-pulse mt-1" />
-            )}
-          </div>
-        </div>
 
-        {/* Biometric Scanner */}
-        <AnimatePresence mode="wait">
-          {logs.length === BOOT_LOGS.length && (
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="flex flex-col items-center"
+          <div className="flex border-b border-gray-300 text-sm">
+            <button 
+              onClick={() => setTab("officer")} 
+              className={`flex-1 p-3 font-semibold ${tab === "officer" ? "border-b-4 border-[#FF9933] text-[#003366]" : "text-gray-500 hover:bg-gray-50"}`}
             >
-              <button 
-                onClick={handleAuth}
-                className="relative group cursor-pointer"
-              >
-                <div className={`w-32 h-32 rounded-full border border-[#00FF9D]/30 flex items-center justify-center bg-[#00FF9D]/5 backdrop-blur-md transition-all duration-500 ${
-                  authStatus === "scanning" ? "shadow-[0_0_50px_rgba(0,255,157,0.4)] border-[#00FF9D]" : 
-                  authStatus === "granted" ? "bg-[#00FF9D]/20 shadow-[0_0_100px_rgba(0,255,157,0.6)] border-[#00FF9D]" :
-                  "hover:bg-[#00FF9D]/10 hover:border-[#00FF9D]/60 hover:shadow-[0_0_30px_rgba(0,255,157,0.2)]"
-                }`}>
-                  {authStatus === "granted" ? (
-                    <ShieldCheck size={48} className="text-[#00FF9D]" />
-                  ) : (
-                    <Fingerprint size={48} className={`text-[#00FF9D] transition-all duration-300 ${authStatus === "scanning" ? "animate-pulse" : "group-hover:scale-110"}`} />
-                  )}
+              Officer ID
+            </button>
+            <button 
+              onClick={() => setTab("mobile")} 
+              className={`flex-1 p-3 font-semibold ${tab === "mobile" ? "border-b-4 border-[#FF9933] text-[#003366]" : "text-gray-500 hover:bg-gray-50"}`}
+            >
+              Mobile / OTP
+            </button>
+          </div>
+
+          <form onSubmit={handleLogin} className="p-6 space-y-5">
+            
+            {tab === "officer" ? (
+              <>
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-1">NCB Officer ID <span className="text-red-500">*</span></label>
+                  <input type="text" required defaultValue="NCB-OP-109" className="w-full border border-gray-400 p-2 text-sm focus:outline-none focus:border-[#003366] focus:ring-1 focus:ring-[#003366]" />
                 </div>
-                
-                {authStatus === "scanning" && (
-                  <motion.div 
-                    animate={{ y: [0, 128, 0] }}
-                    transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
-                    className="absolute top-0 left-0 w-full h-1 bg-[#00FF9D] shadow-[0_0_15px_#00FF9D] rounded-full"
-                  />
-                )}
-              </button>
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-1">Password <span className="text-red-500">*</span></label>
+                  <input type="password" required defaultValue="********" className="w-full border border-gray-400 p-2 text-sm focus:outline-none focus:border-[#003366] focus:ring-1 focus:ring-[#003366]" />
+                </div>
+              </>
+            ) : (
+              <>
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-1">Registered Mobile Number <span className="text-red-500">*</span></label>
+                  <div className="flex border border-gray-400 focus-within:border-[#003366] focus-within:ring-1 focus-within:ring-[#003366]">
+                    <span className="bg-gray-100 p-2 text-sm text-gray-600 border-r border-gray-400">+91</span>
+                    <input type="tel" required className="w-full p-2 text-sm focus:outline-none" />
+                  </div>
+                </div>
+                <button type="button" className="text-[#003366] text-xs font-bold hover:underline">Generate OTP</button>
+              </>
+            )}
 
-              <div className="mt-8 text-center h-8">
-                {authStatus === "waiting" && <p className="text-sm tracking-widest animate-pulse">PRESS TO AUTHENTICATE</p>}
-                {authStatus === "scanning" && <p className="text-sm tracking-widest text-[#00FF9D]">SCANNING BIOMETRICS...</p>}
-                {authStatus === "granted" && <p className="text-sm tracking-widest text-white font-bold bg-[#00FF9D] text-black px-4 py-1 rounded">ACCESS GRANTED</p>}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            {/* Captcha */}
+            <div className="bg-gray-50 p-3 border border-gray-300 flex items-center justify-between">
+              <div className="text-lg font-serif font-bold tracking-widest italic line-through text-gray-800 select-none bg-blue-100 px-4 py-1">{expectedCaptcha}</div>
+              <input 
+                type="text" 
+                value={captcha}
+                onChange={(e) => setCaptcha(e.target.value)}
+                placeholder="Enter CAPTCHA" 
+                required 
+                className="w-1/2 border border-gray-400 p-2 text-sm focus:outline-none focus:border-[#003366]" 
+              />
+            </div>
 
-      </div>
-      
-      {/* Footer Branding */}
-      <div className="absolute bottom-6 flex flex-col items-center gap-1 opacity-50">
-        <div className="flex items-center gap-2">
-          <Cpu size={14} />
-          <span className="text-[10px] tracking-[0.3em] font-bold">MINISTRY OF HOME AFFAIRS</span>
+            <button type="submit" className="w-full bg-[#003366] hover:bg-[#153e90] text-white font-bold py-3 text-sm transition-colors shadow-md">
+              LOGIN
+            </button>
+          </form>
+
+          <div className="bg-yellow-50 p-3 text-[10px] text-gray-700 border-t border-gray-300">
+            <strong>WARNING:</strong> This system is for authorized personnel of the Ministry of Home Affairs only. Unauthorized access is strictly prohibited and punishable under the IT Act 2000.
+          </div>
         </div>
-        <span className="text-[8px] tracking-widest">NARCOTICS CONTROL BUREAU FORENSIC DIVISION</span>
-      </div>
+
+      </main>
+
+      {/* Official Footer */}
+      <footer className="bg-white border-t border-gray-300 p-4 mt-auto">
+        <div className="max-w-md mx-auto flex flex-col items-center gap-3">
+          <div className="flex items-center gap-4 text-gray-500">
+            <div className="flex flex-col items-center">
+              <Fingerprint size={20} className="text-[#003366]" />
+              <span className="text-[8px] font-bold mt-1 text-[#003366]">e-Pramaan</span>
+            </div>
+            <div className="h-6 w-px bg-gray-300"></div>
+            <div className="flex flex-col items-center">
+              <Building size={20} className="text-[#138808]" />
+              <span className="text-[8px] font-bold mt-1 text-[#138808]">Digital India</span>
+            </div>
+          </div>
+          <p className="text-[10px] text-center text-gray-500 leading-tight">
+            Designed, Developed and Hosted by<br/>
+            <strong>National Informatics Centre (NIC)</strong><br/>
+            Ministry of Electronics & Information Technology, Government of India
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }

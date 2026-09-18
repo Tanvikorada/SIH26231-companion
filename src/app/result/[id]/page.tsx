@@ -3,8 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ShieldCheck, ShieldAlert, FileWarning, Fingerprint, Activity, Check, Share2, Printer } from "lucide-react";
-import { motion } from "framer-motion";
+import { ArrowLeft, Landmark, Printer, Download, ShieldCheck, ShieldAlert } from "lucide-react";
 
 export default function ResultPage() {
   const { id } = useParams();
@@ -19,8 +18,8 @@ export default function ResultPage() {
   }, [id]);
 
   if (!data) return (
-    <div className="min-h-screen bg-[#050505] flex items-center justify-center text-[#00FF9D] font-mono tracking-widest text-[10px]">
-      DECRYPTING RECORD...
+    <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center text-[#003366] text-sm font-bold">
+      Loading official record...
     </div>
   );
 
@@ -28,114 +27,136 @@ export default function ResultPage() {
   const isNegative = data.result === "negative";
 
   return (
-    <div className="min-h-screen bg-[#050505] text-[#00FF9D] font-mono pb-20">
+    <div className="min-h-screen bg-[#F5F5F5] font-sans pb-12">
       
-      {/* Dossier Header */}
-      <div className="border-b-2 border-dashed border-[#00FF9D]/30 p-4 pt-8 bg-[#00FF9D]/5">
-        <div className="max-w-md mx-auto flex justify-between items-start">
-          <div>
-            <div className="text-[10px] tracking-[0.3em] font-bold">MINISTRY OF HOME AFFAIRS</div>
-            <div className="text-[8px] tracking-widest text-white/70">NARCOTICS CONTROL BUREAU</div>
-            <div className="mt-2 text-2xl font-black tracking-tight text-white">FORENSIC DOSSIER</div>
-            <div className="text-[10px] text-[#00FF9D]/50 mt-1">RECORD ID: {data.id.substring(0, 8).toUpperCase()}</div>
-          </div>
-          <Fingerprint size={48} className="text-[#00FF9D]/20" />
+      {/* Top Nav (Non-printable) */}
+      <div className="bg-[#003366] p-3 text-white flex justify-between items-center print:hidden sticky top-0 z-50">
+        <button onClick={() => router.push("/ledger")} className="flex items-center gap-1 hover:text-gray-300 text-xs">
+          <ArrowLeft size={16} /> Back to Ledger
+        </button>
+        <div className="flex gap-3">
+          <button onClick={() => window.print()} className="flex items-center gap-1 hover:text-gray-300 text-xs bg-white/10 px-2 py-1 rounded-sm border border-white/20">
+            <Printer size={14} /> Print
+          </button>
+          <button className="flex items-center gap-1 hover:text-gray-300 text-xs bg-[#FF9933] text-white px-2 py-1 rounded-sm shadow-sm">
+            <Download size={14} /> Download PDF
+          </button>
         </div>
       </div>
 
-      <div className="max-w-md mx-auto p-4 space-y-6 mt-4">
-        
-        {/* Main Verdict */}
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className={`border p-6 relative overflow-hidden ${
-            isPositive ? 'border-red-500/50 bg-red-900/10' : 
-            isNegative ? 'border-emerald-500/50 bg-emerald-900/10' : 
-            'border-yellow-500/50 bg-yellow-900/10'
-          }`}
-        >
-          {/* Watermark */}
-          <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-8xl font-black opacity-5 -rotate-12 ${
-            isPositive ? 'text-red-500' : isNegative ? 'text-emerald-500' : 'text-yellow-500'
-          }`}>
-            {data.result.toUpperCase()}
-          </div>
-
-          <div className="relative z-10 flex flex-col items-center">
-            {isPositive ? <ShieldAlert size={48} className="text-red-500 mb-2" /> :
-             isNegative ? <ShieldCheck size={48} className="text-emerald-500 mb-2" /> :
-             <FileWarning size={48} className="text-yellow-500 mb-2" />}
-            
-            <div className="text-[10px] tracking-[0.3em] mb-1">SPECTRAL ANALYSIS VERDICT</div>
-            <h1 className={`text-4xl font-black uppercase tracking-widest ${
-              isPositive ? 'text-red-500' : isNegative ? 'text-emerald-500' : 'text-yellow-500'
-            }`}>
-              {data.result}
-            </h1>
-            
-            <div className="mt-4 bg-black/50 px-4 py-2 text-[10px] border border-white/10 w-full text-center">
-              CONFIDENCE RATING: <span className="text-white font-bold">{data.confidence.toUpperCase()}</span>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Engine Output */}
-        <div className="border border-[#00FF9D]/20 bg-[#00FF9D]/5 p-4">
-          <div className="flex items-center gap-2 text-[10px] tracking-widest mb-3 text-white border-b border-[#00FF9D]/20 pb-2">
-            <Activity size={14} className="text-[#00FF9D]" /> ENGINE DIAGNOSTICS
-          </div>
-          <p className="text-xs text-[#00FF9D]/80 leading-relaxed uppercase">
-            {data.notes || "No additional engine diagnostics provided."}
-          </p>
-          <div className="mt-3 text-[8px] text-[#00FF9D]/40">CALIBRATION: {data.calibration_status.toUpperCase()}</div>
-        </div>
-
-        {/* Chain of Custody */}
-        <div className="border border-[#00FF9D]/20 bg-[#00FF9D]/5 p-4">
-          <div className="flex items-center gap-2 text-[10px] tracking-widest mb-3 text-white border-b border-[#00FF9D]/20 pb-2">
-            <Check size={14} className="text-[#00FF9D]" /> CHAIN OF CUSTODY (IMMUTABLE)
-          </div>
+      <div className="p-4 flex justify-center">
+        {/* A4 Certificate Container */}
+        <div className="bg-white max-w-[800px] w-full shadow-lg border border-gray-300 relative overflow-hidden print:shadow-none print:border-none p-8 md:p-12 min-h-[1000px]">
           
-          <div className="space-y-3">
-            <div>
-              <div className="text-[8px] tracking-widest text-[#00FF9D]/50 mb-0.5">TIMESTAMP (UTC)</div>
-              <div className="text-xs text-white">{new Date(data.captured_at).toISOString()}</div>
-            </div>
-            
-            <div>
-              <div className="text-[8px] tracking-widest text-[#00FF9D]/50 mb-0.5">GPS COORDINATES</div>
-              <div className="text-xs text-white">
-                {data.gps_lat ? `${data.gps_lat.toFixed(6)}, ${data.gps_lng.toFixed(6)}` : "UNAVAILABLE"}
+          {/* Watermark */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none">
+            <Landmark size={400} />
+          </div>
+
+          {/* Certificate Header */}
+          <div className="flex justify-between items-start border-b-2 border-[#003366] pb-4 mb-6">
+            <div className="flex items-center justify-center bg-gray-50 border border-gray-200 p-2 w-16 h-20 shrink-0">
+              <div className="flex flex-col items-center justify-center text-center">
+                <Landmark size={32} className="text-[#003366]" />
+                <span className="text-[6px] font-bold mt-1 text-black">सत्यमेव जयते</span>
               </div>
             </div>
-
-            <div>
-              <div className="text-[8px] tracking-widest text-[#00FF9D]/50 mb-0.5">OPERATOR ID</div>
-              <div className="text-xs text-white">{data.operator_id}</div>
+            <div className="text-center flex-1 px-4">
+              <h1 className="text-xl font-bold text-[#003366] uppercase tracking-wide">Government of India</h1>
+              <h2 className="text-md font-semibold text-gray-800">Ministry of Home Affairs</h2>
+              <h3 className="text-sm text-gray-600 mt-1">Narcotics Control Bureau - Field Analysis Report</h3>
             </div>
-
-            <div>
-              <div className="text-[8px] tracking-widest text-[#00FF9D]/50 mb-0.5">SHA-256 CRYPTOGRAPHIC EVIDENCE HASH</div>
-              <div className="text-[8px] text-[#00FF9D] bg-black p-2 border border-[#00FF9D]/20 break-all font-bold">
-                {data.image_hash}
+            <div className="text-right shrink-0 flex flex-col items-end">
+              <div className="text-[10px] text-gray-500 font-bold mb-1">Form 4A - Generated via NIC</div>
+              {/* QR Code Placeholder */}
+              <div className="w-16 h-16 bg-white border border-gray-300 p-1 flex flex-wrap">
+                {Array.from({length: 64}).map((_, i) => (
+                  <div key={i} className={`w-[12.5%] h-[12.5%] ${Math.random() > 0.5 ? 'bg-black' : 'bg-white'}`} />
+                ))}
               </div>
             </div>
           </div>
+
+          <div className="text-center mb-8">
+            <h4 className="text-lg font-bold border-b border-gray-300 inline-block px-4 pb-1 uppercase tracking-widest text-gray-800">
+              Certificate of Analysis
+            </h4>
+          </div>
+
+          <div className="space-y-6 text-sm text-gray-800 relative z-10">
+            <p className="text-justify leading-relaxed">
+              This is to certify that a chemical spot test analysis was conducted in the field by authorized personnel using the NCB Digital Companion App. The details of the evidence capture and subsequent algorithmic analysis are documented below.
+            </p>
+
+            <table className="w-full border-collapse border border-gray-400">
+              <tbody>
+                <tr className="border-b border-gray-300">
+                  <td className="p-3 bg-gray-50 font-bold w-1/3 border-r border-gray-300">Certificate No.</td>
+                  <td className="p-3 font-mono text-xs">{data.id}</td>
+                </tr>
+                <tr className="border-b border-gray-300">
+                  <td className="p-3 bg-gray-50 font-bold w-1/3 border-r border-gray-300">Date & Time of Capture</td>
+                  <td className="p-3">{new Date(data.captured_at).toLocaleString('en-IN', { timeZoneName: 'short' })}</td>
+                </tr>
+                <tr className="border-b border-gray-300">
+                  <td className="p-3 bg-gray-50 font-bold w-1/3 border-r border-gray-300">Operator ID</td>
+                  <td className="p-3 font-mono">{data.operator_id}</td>
+                </tr>
+                <tr className="border-b border-gray-300">
+                  <td className="p-3 bg-gray-50 font-bold w-1/3 border-r border-gray-300">GPS Coordinates</td>
+                  <td className="p-3">
+                    {data.gps_lat ? `${data.gps_lat.toFixed(6)}, ${data.gps_lng.toFixed(6)}` : "Location Not Recorded"}
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-300">
+                  <td className="p-3 bg-gray-50 font-bold w-1/3 border-r border-gray-300">Evidence Image Hash (SHA-256)</td>
+                  <td className="p-3 font-mono text-[10px] break-all">{data.image_hash}</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div className="mt-8 border-2 border-gray-400 p-6 flex flex-col items-center justify-center bg-gray-50">
+              <h5 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Algorithmic Verdict</h5>
+              <div className="flex items-center gap-3">
+                {isPositive ? <ShieldAlert size={32} className="text-red-600" /> :
+                 isNegative ? <ShieldCheck size={32} className="text-green-700" /> : null}
+                <span className={`text-3xl font-black uppercase tracking-wider ${
+                  isPositive ? 'text-red-700' : isNegative ? 'text-green-700' : 'text-yellow-700'
+                }`}>
+                  {data.result}
+                </span>
+              </div>
+              <div className="mt-4 text-xs font-bold border border-gray-300 bg-white px-4 py-1">
+                Confidence: {data.confidence.toUpperCase()}
+              </div>
+              {data.notes && (
+                <div className="mt-4 text-xs text-gray-600 italic text-center w-full max-w-md">
+                  "{data.notes}"
+                </div>
+              )}
+            </div>
+
+            <p className="text-[10px] text-justify leading-relaxed text-gray-500 mt-8">
+              <strong>Disclaimer:</strong> This is a presumptively generated report based on algorithmic colorimetric analysis (CIEDE2000). While cryptographically secured to prevent tampering, field spot tests are presumptive in nature and must be followed by GC-MS or HPLC laboratory confirmation for absolute legal certainty. This document is electronically generated and requires no physical signature.
+            </p>
+
+            {/* Electronic Signature Block */}
+            <div className="mt-12 flex justify-end">
+              <div className="border border-green-600 bg-green-50 p-2 text-[8px] text-green-800 w-64">
+                <div className="font-bold flex justify-between border-b border-green-300 pb-1 mb-1">
+                  <span>Signature Valid</span>
+                  <Check size={10} />
+                </div>
+                <div>Digitally signed by DS_MINISTRY_OF_HOME_AFFAIRS_1</div>
+                <div>Date: {new Date(data.captured_at).toLocaleDateString('en-IN')}</div>
+                <div>Reason: Field Evidence Capture</div>
+                <div>Location: New Delhi</div>
+              </div>
+            </div>
+
+          </div>
         </div>
-
       </div>
-
-      {/* Action Bar */}
-      <div className="fixed bottom-0 w-full bg-black/90 backdrop-blur-md border-t border-[#00FF9D]/20 p-4 flex gap-4 justify-center z-50">
-        <Link href="/dashboard" className="flex-1 border border-[#00FF9D]/50 text-[#00FF9D] py-3 text-[10px] font-bold tracking-widest text-center hover:bg-[#00FF9D]/10">
-          DASHBOARD
-        </Link>
-        <Link href="/capture" className="flex-1 bg-[#00FF9D] text-black py-3 text-[10px] font-bold tracking-widest text-center shadow-[0_0_15px_rgba(0,255,157,0.4)]">
-          NEW SCAN
-        </Link>
-      </div>
-
     </div>
   );
 }

@@ -1,23 +1,21 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const ibmPlexSans = IBM_Plex_Sans({
-  weight: ["400", "500", "600", "700"],
-  subsets: ["latin"],
+const geistSans = localFont({
+  src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
+  weight: "100 900",
 });
-
-const ibmPlexMono = IBM_Plex_Mono({
-  weight: ["400", "500", "600"],
-  subsets: ["latin"],
+const geistMono = localFont({
+  src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
+  weight: "100 900",
 });
 
 export const metadata: Metadata = {
-  title: "Digital Companion",
-  description: "Field Drug Testing Log",
-  manifest: "/manifest.json",
+  title: "NCB Field Scanner - Government of India",
+  description: "Official Field Drug Testing Application",
 };
 
 export default function RootLayout({
@@ -26,9 +24,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${ibmPlexSans.variable} ${ibmPlexMono.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="en">
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#003366" />
+        <link rel="apple-touch-icon" href="/icon-192.png" />
+      </head>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#F5F5F5] text-[#333333]`}
+      >
+        {/* Tricolor Strip */}
+        <div className="w-full h-1 flex fixed top-0 z-50">
+          <div className="flex-1 bg-[#FF9933]"></div>
+          <div className="flex-1 bg-white"></div>
+          <div className="flex-1 bg-[#138808]"></div>
+        </div>
+        {children}
+      </body>
     </html>
   );
 }
-

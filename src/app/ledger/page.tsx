@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Lock, Hash, Shield } from "lucide-react";
+import { ArrowLeft, Landmark, FileText, Download } from "lucide-react";
 
 export default function LedgerPage() {
   const [tests, setTests] = useState<any[]>([]);
@@ -15,80 +15,81 @@ export default function LedgerPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#050505] text-[#00FF9D] font-mono pb-12">
+    <div className="min-h-screen bg-[#F5F5F5] font-sans pb-12">
       
-      {/* Header */}
-      <div className="sticky top-0 z-50 bg-[#050505]/90 backdrop-blur-md border-b border-[#00FF9D]/30 p-4">
-        <div className="flex items-center justify-between max-w-4xl mx-auto">
-          <Link href="/dashboard" className="flex items-center gap-2 hover:text-white transition-colors">
-            <ArrowLeft size={16} />
-            <span className="text-[10px] tracking-widest font-bold">COMMAND</span>
+      {/* Official Header */}
+      <header className="bg-[#003366] text-white p-4 shadow-md flex justify-between items-center sticky top-0 z-50">
+        <div className="flex items-center gap-3">
+          <Link href="/dashboard" className="text-white hover:text-gray-200 mr-2">
+            <ArrowLeft size={20} />
           </Link>
-          <div className="flex items-center gap-2">
-            <Lock size={14} className="text-[#00FF9D]" />
-            <span className="text-[10px] tracking-[0.2em] font-bold">IMMUTABLE EVIDENCE LEDGER</span>
+          <div>
+            <h1 className="text-xs font-bold tracking-wide">Evidence Ledger</h1>
+            <h2 className="text-[10px] text-gray-300">Historical Cryptographic Records</h2>
           </div>
         </div>
-      </div>
+        <Landmark size={20} className="text-white opacity-50" />
+      </header>
 
-      <div className="max-w-4xl mx-auto p-4 mt-4">
-        <div className="bg-[#00FF9D]/5 border border-[#00FF9D]/20 p-4 mb-8 flex items-start gap-4">
-          <Shield size={24} className="text-[#00FF9D] shrink-0 mt-1" />
-          <p className="text-[10px] text-[#00FF9D]/70 leading-relaxed uppercase tracking-wider">
-            This ledger contains cryptographically signed records of all field spot tests. 
-            Every image captured by operators is hashed locally using SHA-256 before transmission. 
-            These records are immutable and serve as documentary evidence for the Ministry of Home Affairs.
+      <div className="max-w-4xl mx-auto p-4 mt-2">
+        <div className="bg-white border border-gray-300 shadow-sm p-4 mb-4">
+          <p className="text-[10px] text-gray-600 leading-relaxed text-justify">
+            This digital locker contains immutable records of all field spot tests submitted to the NCB servers. 
+            These records are maintained under the guidelines of the Ministry of Home Affairs and can be submitted 
+            as documentary evidence under Section 65B of the Indian Evidence Act.
           </p>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-[10px] text-left border-collapse">
-            <thead>
-              <tr className="border-b-2 border-[#00FF9D]/30 text-[#00FF9D]/50">
-                <th className="py-3 px-2 font-bold tracking-widest">TIMESTAMP</th>
-                <th className="py-3 px-2 font-bold tracking-widest">OP-ID</th>
-                <th className="py-3 px-2 font-bold tracking-widest">RESULT</th>
-                <th className="py-3 px-2 font-bold tracking-widest">GPS LOCATION</th>
-                <th className="py-3 px-2 font-bold tracking-widest">SHA-256 EVIDENCE HASH</th>
-                <th className="py-3 px-2"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {tests.map((test) => (
-                <tr key={test.id} className="border-b border-[#00FF9D]/10 hover:bg-[#00FF9D]/5 transition-colors">
-                  <td className="py-4 px-2 text-white whitespace-nowrap">{new Date(test.captured_at).toLocaleString()}</td>
-                  <td className="py-4 px-2 text-[#00FF9D]/70 whitespace-nowrap">{test.operator_id}</td>
-                  <td className="py-4 px-2">
-                    <span className={`px-2 py-1 font-bold ${
-                      test.result === 'positive' ? 'text-red-500 bg-red-500/10' :
-                      test.result === 'negative' ? 'text-emerald-500 bg-emerald-500/10' :
-                      'text-yellow-500 bg-yellow-500/10'
-                    }`}>
-                      {test.result.toUpperCase()}
-                    </span>
-                  </td>
-                  <td className="py-4 px-2 text-[#00FF9D]/50 whitespace-nowrap">
-                    {test.gps_lat ? `${test.gps_lat.toFixed(4)}, ${test.gps_lng.toFixed(4)}` : "---"}
-                  </td>
-                  <td className="py-4 px-2 text-[8px] text-[#00FF9D]/40 font-mono tracking-wider max-w-[200px] truncate">
-                    <Hash size={10} className="inline mr-1" />
-                    {test.image_hash}
-                  </td>
-                  <td className="py-4 px-2 text-right">
-                    <Link href={`/result/${test.id}`} className="text-[#00FF9D] border border-[#00FF9D]/30 px-3 py-1 hover:bg-[#00FF9D] hover:text-black transition-colors font-bold tracking-widest">
-                      VIEW
-                    </Link>
-                  </td>
+        <div className="bg-white border border-gray-300 shadow-sm rounded-sm overflow-hidden">
+          <div className="bg-gray-100 p-3 border-b border-gray-300 flex justify-between items-center">
+            <h3 className="font-bold text-[#003366] text-sm">Issued Certificates</h3>
+            <div className="text-[10px] bg-white border border-gray-300 px-2 py-1 text-gray-600">Total: {tests.length} Records</div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs text-left border-collapse">
+              <thead>
+                <tr className="bg-gray-50 border-b border-gray-300 text-gray-700">
+                  <th className="py-3 px-3 font-bold uppercase tracking-wider">Date & Time (IST)</th>
+                  <th className="py-3 px-3 font-bold uppercase tracking-wider">Operator ID</th>
+                  <th className="py-3 px-3 font-bold uppercase tracking-wider">Verdict</th>
+                  <th className="py-3 px-3 font-bold uppercase tracking-wider">Evidence Hash (SHA-256)</th>
+                  <th className="py-3 px-3 font-bold uppercase tracking-wider text-center">Action</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          
-          {tests.length === 0 && (
-            <div className="text-center py-12 text-[#00FF9D]/30 text-xs tracking-widest">
-              NO RECORDS FOUND IN LEDGER
-            </div>
-          )}
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {tests.map((test, index) => (
+                  <tr key={test.id} className={index % 2 === 0 ? "bg-white" : "bg-gray-50/50"}>
+                    <td className="py-3 px-3 text-gray-800 whitespace-nowrap">{new Date(test.captured_at).toLocaleString('en-IN')}</td>
+                    <td className="py-3 px-3 text-gray-600 whitespace-nowrap">{test.operator_id}</td>
+                    <td className="py-3 px-3">
+                      <span className={`px-2 py-1 font-bold rounded-sm border text-[9px] uppercase ${
+                        test.result === 'positive' ? 'text-red-700 bg-red-50 border-red-200' :
+                        test.result === 'negative' ? 'text-green-700 bg-green-50 border-green-200' :
+                        'text-yellow-700 bg-yellow-50 border-yellow-200'
+                      }`}>
+                        {test.result}
+                      </span>
+                    </td>
+                    <td className="py-3 px-3 text-[9px] text-gray-500 font-mono max-w-[200px] truncate">
+                      {test.image_hash}
+                    </td>
+                    <td className="py-3 px-3 text-center">
+                      <Link href={`/result/${test.id}`} className="inline-flex items-center gap-1 text-[#003366] hover:underline font-bold text-[10px]">
+                        <FileText size={12} /> View
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            
+            {tests.length === 0 && (
+              <div className="text-center py-12 text-gray-500 text-sm">
+                No issued certificates found in this locker.
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
