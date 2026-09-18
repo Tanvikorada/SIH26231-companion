@@ -172,11 +172,11 @@ export default function CapturePage() {
               <select value={reagent} onChange={(e) => setReagent(e.target.value)} className="w-full border border-gray-400 p-2 text-sm focus:outline-none focus:border-[#003366] bg-white">
                 <option value="Auto-Detect (Lateral Flow)">Auto-Detect (Lateral Flow Cassette)</option>
                 <option value="Marquis">Marquis Reagent</option>
-                <option value="Ferric Sulfate">Ferric Sulfate</option>
-                <option value="Nitric Acid">Nitric Acid</option>
+                <option value="Ferric">Ferric Sulfate</option>
+                <option value="Nitric">Nitric Acid</option>
                 <option value="Wagner">Wagner Test</option>
-                <option value="Cobalt Thiocyanate">Cobalt Thiocyanate</option>
-                <option value="Simon Test">Simon Test</option>
+                <option value="Cobalt">Cobalt Thiocyanate</option>
+                <option value="Simon">Simon Test</option>
                 <option value="Liebermann">Liebermann</option>
               </select>
             </div>
