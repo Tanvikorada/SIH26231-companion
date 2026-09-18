@@ -114,22 +114,28 @@ export async function POST(req: Request) {
     const capturedRef: RGB = { r: refStats.channels[0].mean, g: refStats.channels[1].mean, b: refStats.channels[2].mean };
     const capturedTest: RGB = { r: testStats.channels[0].mean, g: testStats.channels[1].mean, b: testStats.channels[2].mean };
 
-    let calibration_status = detected ? "calibrated" : "calibrated_fallback";
-    if (capturedRef.r < 10 && capturedRef.g < 10 && capturedRef.b < 10) {
-      calibration_status = "failed_no_reference_card";
-    }
-
+    let calibration_status = (detected && detected.orientation !== "unknown") ? "calibrated" : "uncalibrated";
+    
     let result = "inconclusive";
     let confidence = "low";
+    let notes = formData.get("notes")?.toString() || "";
 
-    if (calibration_status.startsWith("calibrated")) {
-      const calibratedTest = calibrateColor(capturedTest, capturedRef);
-      
-      const reagent = formData.get("reagent")?.toString() || "Marquis";
-      const classification = classifySpotTest(calibratedTest, reagent);
-
-      result = classification.result;
+    const reagent = formData.get("reagent")?.toString() || "Marquis";
+    
+    // If no card is found, do NOT corrupt the color by calibrating against a random background pixel.
+    // Use the raw color, but cap the confidence since lighting might skew the reading.
+    const finalTestColor = calibration_status === "calibrated" ? calibrateColor(capturedTest, capturedRef) : capturedTest;
+    
+    const classification = classifySpotTest(finalTestColor, reagent);
+    result = classification.result;
+    
+    // Downgrade confidence if uncalibrated
+    if (calibration_status === "uncalibrated" && classification.result !== "inconclusive") {
+      confidence = "low";
+      notes = "[WARNING: No color card detected. Raw uncalibrated color used.] " + (classification.notes || notes);
+    } else {
       confidence = classification.confidence;
+      notes = (classification.notes || "") + (notes ? " - " + notes : "");
     }
 
     // In Vercel serverless, we cannot write to disk. 
