@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Test {
+  id                 String   @id @default(uuid())
+  operator_id        String
+  image_path         String
+  image_hash         String
+  gps_lat            Float?
+  gps_lng            Float?
+  captured_at        DateTime
+  recorded_at        DateTime @default(now())
+  result             String
+  confidence         String
+  calibration_status String
+  notes              String?
+
+  @@index([captured_at(sort: Desc)])
+  @@index([operator_id])
+  @@index([result])
+}
