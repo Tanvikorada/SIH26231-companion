@@ -17,7 +17,7 @@ export default function LogsPage() {
 
   return (
     <div className="min-h-screen bg-[#0B192C] text-white font-mono flex flex-col">
-      <div className="p-4 bg-[#1E3E62]/50 border-b border-[#1E3E62] flex items-center justify-between sticky top-0 z-10 backdrop-blur-md">
+      <div className="p-4 bg-[#1E3E62] border-b border-[#1E3E62] flex items-center justify-between sticky top-0 z-10">
         <Link href="/" className="text-[#8b9bb4] hover:text-white flex items-center gap-2 transition-colors">
           <ArrowLeft size={20} />
           <span className="text-sm">HOME</span>

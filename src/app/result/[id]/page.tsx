@@ -30,9 +30,14 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
       
       {/* Top Nav (Non-printable) */}
       <div className="bg-[#003366] p-3 text-white flex justify-between items-center print:hidden sticky top-0 z-50">
-        <button onClick={() => router.push("/dashboard")} className="flex items-center gap-1 hover:text-gray-300 text-xs">
-          <ArrowLeft size={16} /> Back to Dashboard
-        </button>
+        <div className="flex items-center gap-4">
+          <button onClick={() => router.push("/ledger")} className="flex items-center gap-1 hover:text-gray-300 text-xs">
+            <ArrowLeft size={16} /> Back to Ledger
+          </button>
+          <button onClick={() => router.push("/dashboard")} className="flex items-center gap-1 hover:text-gray-300 text-xs">
+            Dashboard
+          </button>
+        </div>
         <div className="flex gap-3">
           <button onClick={() => window.print()} className="flex items-center gap-1 hover:text-gray-300 text-xs bg-white/10 px-2 py-1 border border-white/20">
             <Printer size={14} /> Print

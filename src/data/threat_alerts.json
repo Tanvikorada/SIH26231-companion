@@ -1,0 +1,202 @@
+{
+  "success": true,
+  "source": "live_cache",
+  "lastUpdated": "2026-09-19T18:40:39.089Z",
+  "count": 10,
+  "sourcesScraped": [
+    "US FDA / openFDA",
+    "DEA / UNODC / NCB Early Warning Bulletins"
+  ],
+  "alerts": [
+    {
+      "id": "FDA-REC-D-321-2016",
+      "source": "US FDA / openFDA",
+      "substance": "Progesterone",
+      "category": "RECALL",
+      "threatLevel": "HIGH",
+      "publishedAt": "2015-11-25T00:00:00.000Z",
+      "region": "United States",
+      "summary": "Progesterone 100 mg/mL in Corn Oil Injection, 2 mL vials, Rx only, Essential Wellness P...",
+      "details": "Lack of Assurance of Sterility:  A recall of all compounded sterile preparations within expiry is being initiated due to observations associated with poor sterile production practices resulting in a lack of sterility assurance for their finished drugs.",
+      "status": "ACTIVE",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts"
+    },
+    {
+      "id": "FDA-REC-D-0080-2021",
+      "source": "US FDA / openFDA",
+      "substance": "Assured",
+      "category": "RECALL",
+      "threatLevel": "HIGH",
+      "publishedAt": "2020-11-25T00:00:00.000Z",
+      "region": "United States",
+      "summary": "Assured Instant Hand Sanitizer Aloe & Moisturizers (Ethyl Alcohol 70% v/v) 8 fl oz / 23...",
+      "details": "CGMP Deviations: Next Advanced Antibacterial Hand Sanitizer was found to be below the label claim for ethanol content and contained methanol. Other products were recalled because they were manufactured in the same facility as the product found to contain methanol.",
+      "status": "ACTIVE",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts"
+    },
+    {
+      "id": "FDA-REC-D-0115-2026",
+      "source": "US FDA / openFDA",
+      "substance": "Semaglutide",
+      "category": "RECALL",
+      "threatLevel": "HIGH",
+      "publishedAt": "2025-11-05T00:00:00.000Z",
+      "region": "United States",
+      "summary": "Semaglutide Injection, 10 mg/4 mL (2.5 mg/mL), 4mL Multidose Vial, For Subcutaneous Use...",
+      "details": "Lack of Assurance of Sterility",
+      "status": "ACTIVE",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts"
+    },
+    {
+      "id": "FDA-REC-D-1285-2020",
+      "source": "US FDA / openFDA",
+      "substance": "Amphetamine",
+      "category": "RECALL",
+      "threatLevel": "HIGH",
+      "publishedAt": "2020-06-10T00:00:00.000Z",
+      "region": "United States",
+      "summary": "Dextroamphetamine Saccharate, Amphetamine Aspartate, Dextroamphetamine Sulfate and Amph...",
+      "details": "Some bottles may contain mixed strengths of the product.",
+      "reagentGuidance": {
+        "reagent": "Marquis",
+        "expectedReaction": "Characteristic Color Change (RGB: 139, 48, 14)",
+        "rgbTarget": [
+          139,
+          48,
+          14
+        ],
+        "cautionNote": "Standard forensic presumptive spot test. Observe within 10-30 seconds."
+      },
+      "status": "ACTIVE",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts"
+    },
+    {
+      "id": "FDA-REC-D-0623-2022",
+      "source": "US FDA / openFDA",
+      "substance": "Controlled Formulation",
+      "category": "CONTAMINATION",
+      "threatLevel": "HIGH",
+      "publishedAt": "2022-03-02T00:00:00.000Z",
+      "region": "United States",
+      "summary": "No Drip Nasal Spray, Oxymetazoline HCl 0.05% Nasal Decongestant, 1 FL Oz (30 mL) per bo...",
+      "details": "CGMP Deviations: Products were manufactured with contaminated excipient that was recalled from the excipient supplier.",
+      "status": "ACTIVE",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts"
+    },
+    {
+      "id": "DEA-EWA-2026-N01",
+      "source": "DEA STRL & UNODC EWA",
+      "substance": "Protonitazepyne / Bromazolam",
+      "category": "NOVEL_OPIOID",
+      "threatLevel": "CRITICAL",
+      "publishedAt": "2026-08-10T00:00:00.000Z",
+      "region": "International",
+      "summary": "Protonitazepyne and Bromazolam Adulteration in Counterfeit Prescription Tablets",
+      "details": "Severe synthetic benzimidazole opioid analogue with estimated potency up to 20x fentanyl identified in counterfeit prescription pills. Requires multiple doses of naloxone.",
+      "status": "ACTIVE",
+      "url": "https://www.dea.gov/resources/threat-bulletins",
+      "reagentGuidance": {
+        "reagent": "Marquis / Strip",
+        "expectedReaction": "Yellow-brown delayed reaction (reagent does not confirm nitazene; test strip required)",
+        "rgbTarget": [
+          180,
+          150,
+          40
+        ],
+        "cautionNote": "High potency synthetic opioid (up to 20-40x fentanyl). Reagent presumptive only; requires GC-MS or immunoassay."
+      }
+    },
+    {
+      "id": "NCB-IN-2026-X04",
+      "source": "Narcotics Control Bureau (NCB)",
+      "substance": "Medetomidine / Xylazine",
+      "category": "ADULTERANT",
+      "threatLevel": "CRITICAL",
+      "publishedAt": "2026-07-28T00:00:00.000Z",
+      "region": "National (India)",
+      "summary": "Medetomidine and Xylazine Adulterant Infiltration in Illicit Street Opioids",
+      "details": "Potent non-opioid alpha-2 adrenergic agonists detected in seized heroin powders across western and northern hubs, inducing profound bradycardia, hypotension, and severe necrotic ulcerations.",
+      "status": "ACTIVE",
+      "url": "https://narcoticsindia.nic.in/",
+      "reagentGuidance": {
+        "reagent": "Marquis / Xylazine Strip",
+        "expectedReaction": "No direct Marquis color change; Marquis detects base opioid while adulterant remains masked",
+        "rgbTarget": [
+          16,
+          6,
+          13
+        ],
+        "cautionNote": "Non-opioid alpha-2 agonist unresponsive to naloxone. Use dedicated test strip."
+      }
+    },
+    {
+      "id": "UNODC-EWA-2026-C09",
+      "source": "UNODC Global SMART Programme",
+      "substance": "Carfentanil & Etodesnitazene",
+      "category": "NOVEL_OPIOID",
+      "threatLevel": "CRITICAL",
+      "publishedAt": "2026-09-02T00:00:00.000Z",
+      "region": "International",
+      "summary": "Trace Detection of Ultra-Potent Fentanyl and Nitazene Analogues in Seized Powder Shipments",
+      "details": "High-lethality synthetic opioids identified in cross-border consignments. Dermal and inhalation hazard to first-response field officers.",
+      "status": "ACTIVE",
+      "url": "https://www.unodc.org/LSS/Home/EWA",
+      "reagentGuidance": {
+        "reagent": "Marquis / Strip",
+        "expectedReaction": "Yellow-brown delayed reaction (reagent does not confirm nitazene; test strip required)",
+        "rgbTarget": [
+          180,
+          150,
+          40
+        ],
+        "cautionNote": "High potency synthetic opioid (up to 20-40x fentanyl). Reagent presumptive only; requires GC-MS or immunoassay."
+      }
+    },
+    {
+      "id": "NCB-IN-2026-B12",
+      "source": "Narcotics Control Bureau (NCB)",
+      "substance": "Counterfeit Alprazolam (Bromazolam)",
+      "category": "COUNTERFEIT",
+      "threatLevel": "HIGH",
+      "publishedAt": "2026-06-15T00:00:00.000Z",
+      "region": "National (India)",
+      "summary": "Counterfeit Alprazolam 2mg Tablets Pressed with Unregulated Bromazolam",
+      "details": "Counterfeit blister packs mimicking licensed pharmaceutical brands found to contain bromazolam rather than alprazolam. Extreme sedation risk.",
+      "status": "ACTIVE",
+      "url": "https://narcoticsindia.nic.in/",
+      "reagentGuidance": {
+        "reagent": "Zimmerman / Marquis",
+        "expectedReaction": "Faint grey-brown to no reaction with Marquis; purple-violet with Zimmerman reagent",
+        "rgbTarget": [
+          140,
+          110,
+          150
+        ],
+        "cautionNote": "Reagent reaction frequently masked by excipients in pressed counterfeit tablets."
+      }
+    },
+    {
+      "id": "EUDA-EWS-2026-K03",
+      "source": "EUDA Early Warning System",
+      "substance": "MDMB-4en-PINACA",
+      "category": "SYNTHETIC_CANNABINOID",
+      "threatLevel": "HIGH",
+      "publishedAt": "2026-08-22T00:00:00.000Z",
+      "region": "Europe",
+      "summary": "Potent Semi-Synthetic Cannabinoid Sprayed on Herbal Matrices",
+      "details": "Acute poisonings associated with high-affinity CB1 receptor agonist sprayed unevenly on herbal substrates, producing erratic dosing and cardiovascular collapse.",
+      "status": "MONITORING",
+      "url": "https://www.euda.europa.eu/topics/anti-drugs-strategy/early-warning-system_en",
+      "reagentGuidance": {
+        "reagent": "Duquenois-Levine",
+        "expectedReaction": "Inconclusive / No violet layer (synthetic cannabinoids lack natural THC chromophore)",
+        "rgbTarget": [
+          150,
+          150,
+          150
+        ],
+        "cautionNote": "Rapidly mutating indazole/indole core structures require LC-MS/MS confirmation."
+      }
+    }
+  ]
+}

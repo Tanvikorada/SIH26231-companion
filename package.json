@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "test": "vitest run -c tests/vitest.config.mjs",
+    "scrape": "node --experimental-strip-types scripts/scrape.ts",
     "db:seed": "node prisma/seed.js",
     "dev": "next dev",
     "build": "next build",

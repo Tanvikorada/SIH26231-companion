@@ -1,0 +1,128 @@
+{
+  "success": true,
+  "source": "fallback",
+  "lastUpdated": "2026-09-18T12:00:00.000Z",
+  "count": 6,
+  "sourcesScraped": [
+    "Narcotics Control Bureau (NCB)",
+    "US FDA / openFDA",
+    "DEA Special Testing and Research Laboratory",
+    "UNODC Global SMART Programme"
+  ],
+  "alerts": [
+    {
+      "id": "NCB-IN-2026-X04",
+      "source": "Narcotics Control Bureau (NCB)",
+      "substance": "Medetomidine / Xylazine",
+      "category": "ADULTERANT",
+      "threatLevel": "CRITICAL",
+      "publishedAt": "2026-09-15T08:30:00.000Z",
+      "region": "National (India)",
+      "summary": "Medetomidine and Xylazine Adulterant Infiltration in Illicit Street Opioids",
+      "details": "Non-opioid alpha-2 adrenergic agonists detected in seized heroin powders across regional transit hubs. Induces severe necrotic ulcerations and profound hypotension; unresponsive to naloxone.",
+      "reagentGuidance": {
+        "reagent": "Marquis / Xylazine Strip",
+        "expectedReaction": "No direct Marquis color change; Marquis detects base opioid while adulterant remains masked",
+        "rgbTarget": [16, 6, 13],
+        "cautionNote": "Alpha-2 agonist not reversed by naloxone. Use dedicated test strip."
+      },
+      "status": "ACTIVE",
+      "url": "https://narcoticsindia.nic.in/"
+    },
+    {
+      "id": "DEA-EWA-2026-N01",
+      "source": "DEA STRL & UNODC EWA",
+      "substance": "Protonitazepyne / Bromazolam",
+      "category": "NOVEL_OPIOID",
+      "threatLevel": "CRITICAL",
+      "publishedAt": "2026-09-12T14:15:00.000Z",
+      "region": "International",
+      "summary": "Protonitazepyne and Bromazolam Adulteration in Counterfeit Prescription Tablets",
+      "details": "Severe synthetic benzimidazole opioid analogue with estimated potency up to 20x fentanyl identified in counterfeit prescription pills.",
+      "reagentGuidance": {
+        "reagent": "Marquis / Strip",
+        "expectedReaction": "Yellow-brown delayed reaction (reagent does not confirm nitazene; test strip required)",
+        "rgbTarget": [180, 150, 40],
+        "cautionNote": "High potency synthetic opioid (up to 20-40x fentanyl). Presumptive only."
+      },
+      "status": "ACTIVE",
+      "url": "https://www.dea.gov/resources/threat-bulletins"
+    },
+    {
+      "id": "FDA-REC-2026-0881",
+      "source": "US FDA / openFDA",
+      "substance": "Morphine Sulfate",
+      "category": "RECALL",
+      "threatLevel": "HIGH",
+      "publishedAt": "2026-09-08T11:00:00.000Z",
+      "region": "United States",
+      "summary": "Morphine Sulfate Oral Solution 20 mg/mL - Subpotency and Microbial Contamination",
+      "details": "Class I recall initiated due to out-of-specification microbial testing and degradation of active pharmaceutical ingredient.",
+      "reagentGuidance": {
+        "reagent": "Marquis",
+        "expectedReaction": "Dark Violet / Black (RGB: 16, 6, 13)",
+        "rgbTarget": [16, 6, 13],
+        "cautionNote": "Standard forensic presumptive spot test. Observe within 10-30 seconds."
+      },
+      "status": "ACTIVE",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts"
+    },
+    {
+      "id": "NCB-IN-2026-B12",
+      "source": "Narcotics Control Bureau (NCB)",
+      "substance": "Counterfeit Alprazolam (Bromazolam)",
+      "category": "COUNTERFEIT",
+      "threatLevel": "HIGH",
+      "publishedAt": "2026-08-28T09:45:00.000Z",
+      "region": "National (India)",
+      "summary": "Counterfeit Alprazolam 2mg Tablets Pressed with Unregulated Bromazolam",
+      "details": "Counterfeit blister packs mimicking licensed pharmaceutical brands found to contain unregulated bromazolam rather than alprazolam. Extreme sedation risk.",
+      "reagentGuidance": {
+        "reagent": "Zimmerman / Marquis",
+        "expectedReaction": "Faint grey-brown to no reaction with Marquis; purple-violet with Zimmerman reagent",
+        "rgbTarget": [140, 110, 150],
+        "cautionNote": "Reagent reaction frequently masked by excipients in pressed counterfeit tablets."
+      },
+      "status": "ACTIVE",
+      "url": "https://narcoticsindia.nic.in/"
+    },
+    {
+      "id": "UNODC-EWA-2026-C09",
+      "source": "UNODC Global SMART Programme",
+      "substance": "Carfentanil & Etodesnitazene",
+      "category": "NOVEL_OPIOID",
+      "threatLevel": "CRITICAL",
+      "publishedAt": "2026-08-20T16:20:00.000Z",
+      "region": "International",
+      "summary": "Trace Detection of Ultra-Potent Fentanyl and Nitazene Analogues in Seized Powder Shipments",
+      "details": "High-lethality synthetic opioids identified in cross-border consignments. Severe dermal and inhalation hazard to first-response field officers.",
+      "reagentGuidance": {
+        "reagent": "Marquis / Strip",
+        "expectedReaction": "Orange to Reddish-Brown (RGB: 185, 135, 26)",
+        "rgbTarget": [185, 135, 26],
+        "cautionNote": "Standard forensic presumptive spot test. Observe within 10-30 seconds."
+      },
+      "status": "ACTIVE",
+      "url": "https://www.unodc.org/LSS/Home/EWA"
+    },
+    {
+      "id": "FDA-REC-2026-0742",
+      "source": "US FDA / openFDA",
+      "substance": "Amphetamine",
+      "category": "COUNTERFEIT",
+      "threatLevel": "HIGH",
+      "publishedAt": "2026-08-14T10:10:00.000Z",
+      "region": "United States",
+      "summary": "Counterfeit Mixed Amphetamine Salts (Adderall 30mg) Pressed with Methamphetamine",
+      "details": "Class I recall of illicit counterfeit tablets mimicking Adderall 30mg found circulating in unauthorized retail channels containing methamphetamine.",
+      "reagentGuidance": {
+        "reagent": "Marquis",
+        "expectedReaction": "Orange to Reddish-Brown (RGB: 139, 48, 14)",
+        "rgbTarget": [139, 48, 14],
+        "cautionNote": "Standard forensic presumptive spot test. Observe within 10-30 seconds."
+      },
+      "status": "ACTIVE",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts"
+    }
+  ]
+}
