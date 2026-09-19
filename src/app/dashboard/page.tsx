@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Camera, ShieldCheck, Activity, MapPin, Database, ChevronRight, Fingerprint, Lock, ShieldAlert } from "lucide-react";
-import { motion } from "framer-motion";
+import { Camera, Database, ShieldAlert, CheckCircle, Activity, Info } from "lucide-react";
 
 export default function Dashboard() {
   const [stats, setStats] = useState({ total: 0, positive: 0, negative: 0, inconclusive: 0 });
@@ -12,111 +11,141 @@ export default function Dashboard() {
     fetch("/api/v1/dashboard/stats").then(r => r.json()).then(setStats).catch(() => {});
   }, []);
 
-  const container: any = {
-    hidden: { opacity: 0 },
-    show: { opacity: 1, transition: { staggerChildren: 0.1 } }
-  };
-
-  const item: any = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
-  };
-
   return (
-    <div className="min-h-screen pb-20">
-      {/* Premium Glassmorphic Header */}
-      <header className="sticky top-1.5 z-40 bg-white/70 backdrop-blur-xl border-b border-slate-200/50">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-gov-blue to-blue-800 flex items-center justify-center shadow-lg shadow-blue-900/20">
-              <ShieldCheck className="text-white w-6 h-6" />
+    <div className="min-h-screen bg-[#F8FAFC]">
+      {/* Official GIGW Header Strip */}
+      <div className="bg-[#003366] text-white border-b-4 border-[#FF9933]">
+        <div className="max-w-7xl mx-auto px-4 py-2 flex justify-between items-center text-xs">
+          <div className="flex gap-4">
+            <span className="font-semibold tracking-wide">GOVERNMENT OF INDIA</span>
+            <span className="hidden sm:inline opacity-80 border-l border-white/20 pl-4">Ministry of Home Affairs</span>
+          </div>
+          <div className="flex gap-3 font-semibold">
+            <button aria-label="Decrease Text Size" className="hover:underline">A-</button>
+            <button aria-label="Normal Text Size" className="hover:underline">A</button>
+            <button aria-label="Increase Text Size" className="hover:underline">A+</button>
+            <span className="border-l border-white/20 pl-3">English</span>
+          </div>
+        </div>
+      </div>
+
+      <header className="bg-white border-b border-gray-300 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            {/* Standard Placeholder for Emblem */}
+            <div className="w-12 h-16 bg-gray-100 border border-gray-300 flex items-center justify-center">
+              <span className="text-[10px] text-gray-400 text-center uppercase font-bold leading-tight">National<br/>Emblem</span>
             </div>
             <div>
-              <h1 className="font-bold text-slate-900 tracking-tight leading-tight">NCB O.A.S.</h1>
-              <p className="text-[10px] uppercase font-semibold tracking-wider text-slate-500">Optical Analysis System</p>
+              <h1 className="font-bold text-2xl text-[#003366] tracking-tight uppercase">Narcotics Control Bureau</h1>
+              <p className="text-sm font-semibold text-gray-600">Optical Analysis System (O.A.S.) - Core Dashboard</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="flex h-2 w-2 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
-            <span className="text-[10px] font-bold tracking-widest text-emerald-600 uppercase">Sys_Online</span>
+          <div className="bg-green-50 border border-green-200 text-green-800 px-3 py-1 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+            <span className="w-2 h-2 bg-green-500 rounded-full"></span> System Online
           </div>
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-8">
-        <motion.div variants={container} initial="hidden" animate="show" className="space-y-6">
+      {/* Main Content Area */}
+      <main className="max-w-7xl mx-auto px-4 py-8">
+        
+        {/* Navigation Breadcrumb */}
+        <div className="text-sm text-gray-500 mb-6 flex items-center gap-2 border-b border-gray-200 pb-2">
+          <span>Home</span> &gt; <span className="font-bold text-[#003366]">Operator Dashboard</span>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
-          {/* Welcome Banner */}
-          <motion.div variants={item} className="bg-gov-blue rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden shadow-xl shadow-gov-blue/20">
-            <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
-              <Fingerprint className="w-48 h-48" />
-            </div>
-            <div className="relative z-10 max-w-lg">
-              <div className="flex items-center gap-2 text-blue-200 mb-2">
-                <Lock className="w-4 h-4" />
-                <span className="text-xs font-semibold tracking-wider uppercase">Zero-Trust Secured</span>
+          {/* Left Column: Actions */}
+          <div className="lg:col-span-1 space-y-6">
+            
+            <div className="bg-white border border-[#003366] shadow-sm">
+              <div className="bg-[#003366] text-white px-4 py-3 font-bold uppercase tracking-wide text-sm flex items-center justify-between">
+                Field Operations
               </div>
-              <h2 className="text-2xl sm:text-3xl font-bold mb-2">Operator Dashboard</h2>
-              <p className="text-blue-100/80 text-sm sm:text-base leading-relaxed">
-                Local CIEDE2000 math engine loaded. Cryptographic ledgers synced. Ready for field deployment.
-              </p>
-            </div>
-          </motion.div>
-
-          {/* Quick Action Bento */}
-          <motion.div variants={item} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Link href="/capture" className="group relative bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl p-6 text-white overflow-hidden shadow-lg hover:shadow-indigo-500/25 transition-all hover:scale-[1.02] active:scale-[0.98]">
-              <div className="absolute -right-4 -bottom-4 bg-white/10 w-32 h-32 rounded-full blur-2xl group-hover:bg-white/20 transition-all"></div>
-              <Camera className="w-8 h-8 mb-4 text-white/90" />
-              <h3 className="text-xl font-bold mb-1">New Scan</h3>
-              <p className="text-indigo-100 text-sm opacity-90">Run optical color-calibration on physical evidence.</p>
-              <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all">
-                <ChevronRight className="w-5 h-5 text-white" />
-              </div>
-            </Link>
-
-            <Link href="/ledger" className="group relative bg-white border border-slate-200 rounded-3xl p-6 text-slate-900 overflow-hidden shadow-sm hover:shadow-md transition-all hover:scale-[1.02] active:scale-[0.98]">
-              <div className="absolute -right-4 -bottom-4 bg-slate-100 w-32 h-32 rounded-full blur-2xl group-hover:bg-slate-200 transition-all"></div>
-              <Database className="w-8 h-8 mb-4 text-gov-blue" />
-              <h3 className="text-xl font-bold mb-1">Cryptographic Ledger</h3>
-              <p className="text-slate-500 text-sm">View immutable blockchain-style history of all field tests.</p>
-              <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all">
-                <ChevronRight className="w-5 h-5 text-gov-blue" />
-              </div>
-            </Link>
-          </motion.div>
-
-          {/* Stats Bento */}
-          <motion.div variants={item}>
-            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
-              <Activity className="w-4 h-4 text-gov-blue" /> Live Telemetry
-            </h3>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-                <div className="text-slate-500 text-xs font-semibold mb-1 uppercase tracking-wide">Total Tests</div>
-                <div className="text-3xl font-black text-slate-900">{stats.total}</div>
-              </div>
-              <div className="bg-rose-50 border border-rose-100 rounded-2xl p-5 shadow-sm">
-                <div className="text-rose-600 text-xs font-semibold mb-1 uppercase tracking-wide flex items-center gap-1">
-                  <ShieldAlert className="w-3 h-3" /> Positive
+              <div className="p-4 space-y-4">
+                <Link href="/capture" className="w-full bg-[#FF9933] hover:bg-[#e68a2e] text-white font-bold py-3 px-4 flex items-center justify-center gap-2 shadow-sm transition-colors border border-transparent focus:ring-2 focus:ring-offset-2 focus:ring-[#FF9933]">
+                  <Camera className="w-5 h-5" />
+                  Initiate New Optical Scan
+                </Link>
+                <div className="text-xs text-gray-600 bg-orange-50 p-3 border border-orange-200 flex gap-2 items-start">
+                  <Info className="w-4 h-4 text-[#FF9933] shrink-0 mt-0.5" />
+                  <p>Launch the CIEDE2000 calibration engine to scan physical reagent samples in the field. Ensure adequate lighting.</p>
                 </div>
-                <div className="text-3xl font-black text-rose-700">{stats.positive}</div>
-              </div>
-              <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-5 shadow-sm">
-                <div className="text-emerald-600 text-xs font-semibold mb-1 uppercase tracking-wide">Negative</div>
-                <div className="text-3xl font-black text-emerald-700">{stats.negative}</div>
-              </div>
-              <div className="bg-slate-100 border border-slate-200 rounded-2xl p-5 shadow-sm">
-                <div className="text-slate-500 text-xs font-semibold mb-1 uppercase tracking-wide">Inconclusive</div>
-                <div className="text-3xl font-black text-slate-700">{stats.inconclusive}</div>
               </div>
             </div>
-          </motion.div>
 
-        </motion.div>
+            <div className="bg-white border border-gray-300 shadow-sm">
+              <div className="bg-gray-100 border-b border-gray-300 px-4 py-3 font-bold uppercase tracking-wide text-sm text-[#003366]">
+                Secure Records
+              </div>
+              <div className="p-4">
+                <Link href="/ledger" className="w-full bg-white border-2 border-[#003366] text-[#003366] hover:bg-blue-50 font-bold py-3 px-4 flex items-center justify-center gap-2 transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-[#003366]">
+                  <Database className="w-5 h-5" />
+                  Access Cryptographic Ledger
+                </Link>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Right Column: Telemetry Tables */}
+          <div className="lg:col-span-2 space-y-6">
+            
+            <div className="bg-white border border-gray-300 shadow-sm">
+              <div className="bg-gray-100 border-b border-gray-300 px-4 py-3 font-bold uppercase tracking-wide text-sm text-[#003366] flex items-center gap-2">
+                <Activity className="w-4 h-4" /> Live National Telemetry
+              </div>
+              
+              {/* Dense Data Table */}
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-[#003366] text-white text-xs uppercase tracking-wider">
+                      <th className="p-3 font-semibold border-r border-[#002244]">Metric</th>
+                      <th className="p-3 font-semibold border-r border-[#002244]">Total Count</th>
+                      <th className="p-3 font-semibold">Status Indicator</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-sm">
+                    <tr className="border-b border-gray-200 hover:bg-gray-50">
+                      <td className="p-3 font-bold text-gray-800 border-r border-gray-200">Total Forensic Tests Executed</td>
+                      <td className="p-3 font-mono text-lg text-[#003366] border-r border-gray-200">{stats.total}</td>
+                      <td className="p-3 text-gray-500 text-xs">Active Logging</td>
+                    </tr>
+                    <tr className="border-b border-gray-200 bg-red-50 hover:bg-red-100">
+                      <td className="p-3 font-bold text-red-900 border-r border-red-200 flex items-center gap-2">
+                        <ShieldAlert className="w-4 h-4 text-red-600" /> Positive Detections
+                      </td>
+                      <td className="p-3 font-mono text-lg text-red-700 border-r border-red-200 font-bold">{stats.positive}</td>
+                      <td className="p-3 text-red-600 text-xs font-bold uppercase">Alert State</td>
+                    </tr>
+                    <tr className="border-b border-gray-200 bg-green-50 hover:bg-green-100">
+                      <td className="p-3 font-bold text-green-900 border-r border-green-200 flex items-center gap-2">
+                        <CheckCircle className="w-4 h-4 text-green-600" /> Negative Detections
+                      </td>
+                      <td className="p-3 font-mono text-lg text-green-700 border-r border-green-200">{stats.negative}</td>
+                      <td className="p-3 text-green-600 text-xs uppercase">Cleared</td>
+                    </tr>
+                    <tr className="hover:bg-gray-50">
+                      <td className="p-3 font-bold text-gray-700 border-r border-gray-200">Inconclusive Scans</td>
+                      <td className="p-3 font-mono text-lg text-gray-600 border-r border-gray-200">{stats.inconclusive}</td>
+                      <td className="p-3 text-gray-500 text-xs">Requires Manual Review</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div className="text-xs text-gray-500 border-t border-gray-200 pt-4 mt-8 flex justify-between">
+              <p>Designed strictly conforming to GIGW 3.0 standards.</p>
+              <p>National Informatics Centre (NIC)</p>
+            </div>
+
+          </div>
+
+        </div>
       </main>
     </div>
   );
