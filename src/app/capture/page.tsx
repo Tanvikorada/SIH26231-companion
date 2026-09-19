@@ -3,10 +3,9 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Upload, MapPin, Loader2, CheckCircle2, Scan, FileCode2, Crosshair, Cpu, Camera } from "lucide-react";
+import { ArrowLeft, Camera, MapPin, Loader2, CheckCircle, Scan, FileCode2, Crosshair, Cpu } from "lucide-react";
 import { classifySpotTest, calibrateColor, generateSHA256 } from "@/lib/engine";
 import { toast } from "sonner";
-import { motion, AnimatePresence } from "framer-motion";
 
 export default function CapturePage() {
   const router = useRouter();
@@ -30,7 +29,7 @@ export default function CapturePage() {
           );
         } else { reject(new Error("Not supported")); }
       }),
-      { loading: "Acquiring Military-Grade GPS...", success: "GPS Lock Acquired", error: "Failed to acquire GPS" }
+      { loading: "Acquiring GPS...", success: "GPS Lock Acquired", error: "Failed to acquire GPS" }
     );
   };
 
@@ -39,7 +38,7 @@ export default function CapturePage() {
       const file = e.target.files[0];
       setImageFile(file);
       setPreviewUrl(URL.createObjectURL(file));
-      toast.success("Image secured in local RAM");
+      toast.success("Image secured in local memory");
     }
   };
 
@@ -101,108 +100,105 @@ export default function CapturePage() {
   };
 
   const buttonContent = {
-    "IDLE": { icon: <Cpu size={18} />, text: "INITIALIZE EDGE ENGINE" },
+    "IDLE": { icon: <Cpu size={18} />, text: "INITIATE ANALYSIS" },
     "EXTRACTING": { icon: <Crosshair size={18} className="animate-spin" />, text: "EXTRACTING PIXELS..." },
-    "MATH": { icon: <Loader2 size={18} className="animate-spin" />, text: "RUNNING CIEDE2000 MATH..." },
+    "MATH": { icon: <Loader2 size={18} className="animate-spin" />, text: "COMPUTING CIEDE2000..." },
     "HASHING": { icon: <FileCode2 size={18} className="animate-pulse" />, text: "GENERATING SHA-256..." },
-    "SYNCING": { icon: <Loader2 size={18} className="animate-spin" />, text: "SECURING TO LEDGER..." },
-    "SUCCESS": { icon: <CheckCircle2 size={18} />, text: "REDIRECTING..." }
+    "SYNCING": { icon: <Loader2 size={18} className="animate-spin" />, text: "UPDATING LEDGER..." },
+    "SUCCESS": { icon: <CheckCircle size={18} />, text: "REDIRECTING..." }
   }[processingState];
 
   return (
-    <div className="min-h-screen pb-20">
-      <header className="sticky top-1.5 z-40 bg-white/70 backdrop-blur-xl border-b border-slate-200/50">
-        <div className="max-w-xl mx-auto px-4 h-14 flex items-center gap-3">
-          <Link href="/dashboard" className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors">
-            <ArrowLeft size={18} className="text-slate-700" />
+    <div className="min-h-screen bg-[#F8FAFC]">
+      <header className="bg-white border-b border-gray-300 shadow-sm">
+        <div className="max-w-3xl mx-auto px-4 py-4 flex items-center gap-4">
+          <Link href="/dashboard" className="border border-gray-300 p-2 hover:bg-gray-50 transition-colors">
+            <ArrowLeft size={20} className="text-[#003366]" />
           </Link>
           <div>
-            <h1 className="font-bold text-slate-900 text-sm">Target Analysis</h1>
-            <h2 className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Edge Active
+            <h1 className="font-bold text-xl text-[#003366] tracking-tight uppercase">Optical Target Analysis</h1>
+            <h2 className="text-xs text-green-700 font-bold uppercase tracking-wider flex items-center gap-1">
+              <span className="w-2 h-2 rounded-full bg-green-500"></span> Edge Processing Engine Ready
             </h2>
           </div>
         </div>
       </header>
 
-      <main className="max-w-xl mx-auto px-4 py-6">
-        <motion.form initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} onSubmit={handleSubmit} className="space-y-6">
+      <main className="max-w-3xl mx-auto px-4 py-8">
+        <form onSubmit={handleSubmit} className="space-y-6">
           
-          {/* Scanner Window */}
-          <div className="bg-white rounded-3xl p-2 shadow-sm border border-slate-200/60 overflow-hidden relative group">
-            {!previewUrl ? (
-              <div onClick={() => fileInputRef.current?.click()} className="w-full h-48 sm:h-64 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 hover:bg-slate-100 hover:border-indigo-400 flex flex-col items-center justify-center cursor-pointer transition-all group-active:scale-[0.98]">
-                <div className="w-14 h-14 bg-white shadow-sm rounded-2xl flex items-center justify-center mb-3">
-                  <Camera className="w-6 h-6 text-indigo-500" />
+          <div className="bg-white border border-[#003366] shadow-sm">
+            <div className="bg-[#003366] text-white px-4 py-3 font-bold uppercase tracking-wide text-sm">
+              1. Visual Evidence Capture
+            </div>
+            <div className="p-4">
+              {!previewUrl ? (
+                <div onClick={() => fileInputRef.current?.click()} className="w-full h-64 border-2 border-dashed border-gray-400 bg-gray-50 hover:bg-gray-100 flex flex-col items-center justify-center cursor-pointer transition-colors">
+                  <Camera className="w-10 h-10 text-gray-500 mb-3" />
+                  <span className="text-sm font-bold text-gray-700 uppercase">Select or Capture Image</span>
+                  <span className="text-xs text-gray-500 mt-1">Accepts standard image formats</span>
                 </div>
-                <span className="text-sm font-bold text-slate-700">Capture Evidence</span>
-                <span className="text-xs text-slate-400 mt-1">High-Res Camera / Upload</span>
-              </div>
-            ) : (
-              <div className="relative w-full h-48 sm:h-64 rounded-2xl overflow-hidden bg-black">
-                <img src={previewUrl} alt="Evidence" className="w-full h-full object-contain opacity-90" />
-                {processingState !== "IDLE" && (
-                  <div className="absolute inset-0 z-10 pointer-events-none">
-                    <div className="w-full h-1 bg-emerald-400 animate-scan-line shadow-[0_0_15px_rgba(52,211,153,0.8)]"></div>
-                    <div className="absolute top-1/2 left-[20%] w-8 h-8 -ml-4 -mt-4 border-2 border-emerald-400 rounded-full animate-ping"></div>
-                    <div className="absolute top-1/2 left-[65%] w-8 h-8 -ml-4 -mt-4 border-2 border-indigo-400 rounded-full animate-ping delay-150"></div>
-                  </div>
-                )}
-                <button type="button" onClick={() => {setPreviewUrl(null); setImageFile(null);}} className="absolute top-3 right-3 bg-black/50 backdrop-blur-md text-white text-xs font-bold px-4 py-1.5 rounded-full hover:bg-black/70 transition-colors">
-                  RETAKE
-                </button>
-              </div>
-            )}
-            <input ref={fileInputRef} type="file" accept="image/*" capture="environment" onChange={handleCapture} className="hidden" />
+              ) : (
+                <div className="relative w-full h-64 border border-gray-300 bg-black flex items-center justify-center overflow-hidden">
+                  <img src={previewUrl} alt="Evidence" className="max-w-full max-h-full object-contain" />
+                  <button type="button" onClick={() => {setPreviewUrl(null); setImageFile(null);}} className="absolute top-2 right-2 bg-white text-[#003366] border border-[#003366] text-xs font-bold px-4 py-2 hover:bg-gray-50 transition-colors">
+                    RETAKE IMAGE
+                  </button>
+                </div>
+              )}
+              <input ref={fileInputRef} type="file" accept="image/*" capture="environment" onChange={handleCapture} className="hidden" />
+            </div>
           </div>
 
           <canvas ref={canvasRef} style={{ display: "none" }} />
 
-          {/* Controls */}
-          <div className="bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-slate-200/60 space-y-5">
-            <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Reagent Profile</label>
-              <div className="relative">
-                <select value={reagent} onChange={(e) => setReagent(e.target.value)} className="w-full appearance-none bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-3.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all">
-                  <option value="Auto-Detect (Lateral Flow)">Auto-Detect (Lateral Flow)</option>
-                  <option value="Marquis">Marquis Reagent</option>
-                  <option value="Ferric">Ferric Sulfate</option>
-                  <option value="Nitric">Nitric Acid</option>
-                  <option value="Wagner">Wagner Test</option>
-                  <option value="Cobalt">Cobalt Thiocyanate</option>
-                  <option value="Simon">Simon Test</option>
-                  <option value="Liebermann">Liebermann</option>
-                </select>
-                <Scan className="absolute right-4 top-3.5 w-5 h-5 text-slate-400 pointer-events-none" />
+          <div className="bg-white border border-gray-300 shadow-sm">
+            <div className="bg-gray-100 border-b border-gray-300 px-4 py-3 font-bold uppercase tracking-wide text-sm text-[#003366]">
+              2. Test Parameters
+            </div>
+            <div className="p-4 space-y-5">
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Reagent Profile</label>
+                <div className="relative">
+                  <select value={reagent} onChange={(e) => setReagent(e.target.value)} className="w-full appearance-none bg-white border border-gray-400 text-gray-900 px-4 py-3 text-sm font-bold focus:outline-none focus:border-[#003366] focus:ring-1 focus:ring-[#003366]">
+                    <option value="Auto-Detect (Lateral Flow)">Auto-Detect (Lateral Flow)</option>
+                    <option value="Marquis">Marquis Reagent</option>
+                    <option value="Ferric">Ferric Sulfate</option>
+                    <option value="Nitric">Nitric Acid</option>
+                    <option value="Wagner">Wagner Test</option>
+                    <option value="Cobalt">Cobalt Thiocyanate</option>
+                    <option value="Simon">Simon Test</option>
+                    <option value="Liebermann">Liebermann</option>
+                  </select>
+                  <Scan className="absolute right-4 top-3 w-5 h-5 text-gray-500 pointer-events-none" />
+                </div>
               </div>
-            </div>
 
-            <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Metadata (Optional)</label>
-              <input type="text" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Subject ID / Case #" className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all" />
-            </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Subject Notes (Optional)</label>
+                <input type="text" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Case ID / Location Code" className="w-full bg-white border border-gray-400 text-gray-900 px-4 py-3 text-sm focus:outline-none focus:border-[#003366] focus:ring-1 focus:ring-[#003366]" />
+              </div>
 
-            <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Geolocation Overlay</label>
-              <div className="flex gap-2">
-                <input type="text" disabled value={location ? `${location.lat.toFixed(5)}, ${location.lng.toFixed(5)}` : "Awaiting Lock..."} className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-500 font-mono" />
-                <button type="button" onClick={fetchGPS} className="bg-indigo-50 text-indigo-600 border border-indigo-100 px-5 rounded-xl text-xs font-bold hover:bg-indigo-100 active:scale-95 transition-all flex items-center gap-1.5 shadow-sm">
-                  <MapPin size={16} /> LOCK
-                </button>
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">GPS Telemetry</label>
+                <div className="flex gap-2">
+                  <input type="text" disabled value={location ? `${location.lat.toFixed(6)}, ${location.lng.toFixed(6)}` : "Awaiting Coordinates..."} className="flex-1 bg-gray-100 border border-gray-300 px-4 py-3 text-sm text-gray-600 font-mono" />
+                  <button type="button" onClick={fetchGPS} className="bg-white text-[#003366] border-2 border-[#003366] px-5 text-xs font-bold hover:bg-blue-50 transition-colors flex items-center gap-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#003366]">
+                    <MapPin size={16} /> ACQUIRE
+                  </button>
+                </div>
               </div>
             </div>
           </div>
 
-          <button type="submit" disabled={processingState !== "IDLE"} className={`relative w-full rounded-2xl font-bold py-4 text-sm transition-all shadow-lg flex items-center justify-center gap-2 overflow-hidden ${processingState !== "IDLE" ? "bg-slate-800 text-white cursor-wait scale-[0.99]" : "bg-gradient-to-r from-gov-blue to-blue-700 hover:shadow-blue-900/30 active:scale-[0.98] text-white"}`}>
-            {processingState === "IDLE" && <div className="absolute inset-0 bg-white/20 opacity-0 hover:opacity-100 transition-opacity"></div>}
-            <AnimatePresence mode="popLayout">
-              <motion.div key={processingState} initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -20, opacity: 0 }} transition={{ type: "spring", stiffness: 300, damping: 20 }} className="flex items-center gap-2">
-                {buttonContent.icon}
-                <span className="tracking-widest uppercase">{buttonContent.text}</span>
-              </motion.div>
-            </AnimatePresence>
-          </button>
-        </motion.form>
+          <div className="pt-4">
+            <button type="submit" disabled={processingState !== "IDLE"} className={`w-full font-bold py-4 text-sm transition-colors flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FF9933] ${processingState !== "IDLE" ? "bg-gray-800 text-white cursor-wait" : "bg-[#FF9933] hover:bg-[#e68a2e] text-white border border-transparent shadow-sm"}`}>
+              {buttonContent.icon}
+              <span className="tracking-widest uppercase">{buttonContent.text}</span>
+            </button>
+          </div>
+
+        </form>
       </main>
     </div>
   );
