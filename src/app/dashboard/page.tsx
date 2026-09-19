@@ -2,13 +2,19 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Camera, Database, ShieldAlert, CheckCircle, Activity, Info } from "lucide-react";
+import { Camera, Database, ShieldAlert, CheckCircle, Activity, Info, Search, AlertTriangle, ExternalLink } from "lucide-react";
 
 export default function Dashboard() {
   const [stats, setStats] = useState({ total: 0, positive: 0, negative: 0, inconclusive: 0 });
+  const [alerts, setAlerts] = useState<any[]>([]);
+  const [alertsLoading, setAlertsLoading] = useState(true);
 
   useEffect(() => {
     fetch("/api/v1/dashboard/stats").then(r => r.json()).then(setStats).catch(() => {});
+    fetch("/api/v1/alerts").then(r => r.json()).then(data => {
+      if (data && data.alerts) setAlerts(data.alerts);
+      setAlertsLoading(false);
+    }).catch(() => setAlertsLoading(false));
   }, []);
 
   return (
@@ -32,9 +38,15 @@ export default function Dashboard() {
       <header className="bg-white border-b border-gray-300 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            {/* Standard Placeholder for Emblem */}
-            <div className="w-12 h-16 bg-gray-100 border border-gray-300 flex items-center justify-center">
-              <span className="text-[10px] text-gray-400 text-center uppercase font-bold leading-tight">National<br/>Emblem</span>
+            <div className="w-12 h-16 bg-gray-100 border border-gray-300 flex items-center justify-center relative overflow-hidden p-1">
+               {/* Minimal CSS representation of Ashoka Chakra instead of an image to keep it fully local and static */}
+               <div className="w-8 h-8 rounded-full border-[3px] border-[#003366] flex items-center justify-center">
+                 <div className="w-1 h-full bg-[#003366] absolute rotate-0"></div>
+                 <div className="w-1 h-full bg-[#003366] absolute rotate-45"></div>
+                 <div className="w-1 h-full bg-[#003366] absolute rotate-90"></div>
+                 <div className="w-1 h-full bg-[#003366] absolute rotate-[135deg]"></div>
+                 <div className="w-3 h-3 bg-white rounded-full absolute z-10"></div>
+               </div>
             </div>
             <div>
               <h1 className="font-bold text-2xl text-[#003366] tracking-tight uppercase">Narcotics Control Bureau</h1>
@@ -48,17 +60,17 @@ export default function Dashboard() {
       </header>
 
       {/* Main Content Area */}
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <main className="max-w-7xl mx-auto px-4 py-8 space-y-6">
         
         {/* Navigation Breadcrumb */}
-        <div className="text-sm text-gray-500 mb-6 flex items-center gap-2 border-b border-gray-200 pb-2">
+        <div className="text-sm text-gray-500 flex items-center gap-2 border-b border-gray-200 pb-2">
           <span>Home</span> &gt; <span className="font-bold text-[#003366]">Operator Dashboard</span>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           
           {/* Left Column: Actions */}
-          <div className="lg:col-span-1 space-y-6">
+          <div className="xl:col-span-1 space-y-6">
             
             <div className="bg-white border border-[#003366] shadow-sm">
               <div className="bg-[#003366] text-white px-4 py-3 font-bold uppercase tracking-wide text-sm flex items-center justify-between">
@@ -91,7 +103,7 @@ export default function Dashboard() {
           </div>
 
           {/* Right Column: Telemetry Tables */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="xl:col-span-2 space-y-6">
             
             <div className="bg-white border border-gray-300 shadow-sm">
               <div className="bg-gray-100 border-b border-gray-300 px-4 py-3 font-bold uppercase tracking-wide text-sm text-[#003366] flex items-center gap-2">
@@ -138,13 +150,73 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="text-xs text-gray-500 border-t border-gray-200 pt-4 mt-8 flex justify-between">
-              <p>Designed strictly conforming to GIGW 3.0 standards.</p>
-              <p>National Informatics Centre (NIC)</p>
-            </div>
-
           </div>
 
+        </div>
+
+        {/* Live Alerts Section */}
+        <div className="bg-white border border-gray-300 shadow-sm">
+          <div className="bg-gray-100 border-b border-gray-300 px-4 py-3 font-bold uppercase tracking-wide text-sm text-[#003366] flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 text-[#FF9933]" /> Live Threat Alerts & Advisories
+            </div>
+            <div className="relative">
+              <input type="text" placeholder="Filter alerts..." className="text-xs border border-gray-300 px-3 py-1.5 focus:outline-none focus:border-[#003366]" />
+              <Search className="w-3 h-3 text-gray-400 absolute right-2 top-2" />
+            </div>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr className="bg-gray-50 text-gray-700 border-b border-gray-300 uppercase">
+                  <th className="p-3 font-bold border-r border-gray-200 w-24">Date</th>
+                  <th className="p-3 font-bold border-r border-gray-200 w-32">Source</th>
+                  <th className="p-3 font-bold border-r border-gray-200 w-32">Substance</th>
+                  <th className="p-3 font-bold border-r border-gray-200">Summary</th>
+                  <th className="p-3 font-bold w-24 text-center">Threat Lvl</th>
+                </tr>
+              </thead>
+              <tbody>
+                {alertsLoading ? (
+                  <tr><td colSpan={5} className="p-8 text-center text-gray-500">Loading threat intelligence feed...</td></tr>
+                ) : alerts.length === 0 ? (
+                  <tr><td colSpan={5} className="p-8 text-center text-gray-500">No active alerts at this time.</td></tr>
+                ) : (
+                  alerts.map((alert, i) => (
+                    <tr key={i} className="border-b border-gray-200 hover:bg-gray-50">
+                      <td className="p-3 font-mono text-gray-600 border-r border-gray-200">
+                        {new Date(alert.publishedAt).toLocaleDateString()}
+                      </td>
+                      <td className="p-3 font-bold text-[#003366] border-r border-gray-200">
+                        {alert.source}
+                      </td>
+                      <td className="p-3 font-bold text-gray-800 border-r border-gray-200">
+                        {alert.substance || "UNKNOWN"}
+                      </td>
+                      <td className="p-3 text-gray-600 border-r border-gray-200">
+                        <span className="line-clamp-2" title={alert.details}>{alert.summary}</span>
+                        {alert.url && (
+                          <a href={alert.url} target="_blank" rel="noreferrer" className="text-[#003366] inline-flex items-center gap-1 mt-1 hover:underline">
+                            Source Link <ExternalLink size={10} />
+                          </a>
+                        )}
+                      </td>
+                      <td className="p-3 text-center">
+                        <span className={`px-2 py-1 font-bold tracking-wider rounded-sm text-[10px] ${alert.threatLevel === 'HIGH' ? 'bg-red-100 text-red-800 border border-red-200' : 'bg-orange-100 text-orange-800 border border-orange-200'}`}>
+                          {alert.threatLevel || 'ELEVATED'}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className="text-xs text-gray-500 border-t border-gray-200 pt-4 mt-8 flex justify-between">
+          <p>Designed strictly conforming to GIGW 3.0 standards.</p>
+          <p>National Informatics Centre (NIC)</p>
         </div>
       </main>
     </div>
