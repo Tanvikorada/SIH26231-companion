@@ -1,30 +1,24 @@
 # Digital Companion for Field Drug Testing (SIH26231)
 
-This project is a mobile-first Progressive Web Application (PWA) designed as a digital companion for field drug testing, based on the **SatyaLabel Architecture Pattern** (zero-cost stack, pure standalone-testable classification engine).
+Mobile-first PWA (Next.js 16, React 19, Tailwind v4) that photographs a colorimetric spot test next to a reference card, classifies the color, and stores a tamper-evident record. UI follows Digital India UX4G / GIGW 3.0.
 
-## Target Kit
-**Custom Mock Test Array**
-The colorimetric classifier engine (`src/lib/engine.ts`) is currently modeled around the provided mock test image datasets:
-- **Positive:** Green (RGB: 59, 125, 59)
-- **Negative:** Orange (RGB: 217, 164, 65)
-- **Inconclusive:** Yellow-Green (RGB: 143, 165, 92)
+## IMPORTANT: prototype only, not a forensic instrument
+- Output is a **screening aid**, not evidence of a controlled substance. Presumptive color tests are non-specific; many substances give the same color. Confirmation requires lab analysis (GC-MS / FTIR).
+- Reference colors in `src/lib/color_library.json` come from a published spot-test table, not from measurements of the actual reagents/kits/camera used. Thresholds (`TOLERANCE_POS/NEG` in `src/lib/engine.ts`) are unvalidated.
+- The classifier returns positive/negative/inconclusive per **reagent**, not an identified drug.
+- No accuracy study (sensitivity/specificity, false-positive rate) has been done.
 
-**DISCLAIMER**: This is a demonstrative prototype. The exact color distance thresholds and reference values configured in the classification engine would require rigorous validation and calibration against the real physical kit's manufacturer data before production use.
-
-## Features
-1. **Calibration**: Photographs are captured alongside a fixed reference card. The engine calculates the lighting divergence from the gray reference patch and calibrates the test strip color before classification.
-2. **Pure Classification**: Standalone color comparison with high/estimated/low confidence ratings.
-3. **Tamper-Evident Records**: An SHA-256 hash of the captured image is computed server-side to guarantee integrity. Geolocation and timestamp mismatches are tracked.
-4. **Offline-ready PWA**: Installable on mobile devices via Next-PWA.
-
-## Tech Stack
-- Next.js (App Router, Turbopack)
-- Tailwind CSS v4
-- Prisma (SQLite local datastore for prototype)
-- Sharp (Server-side image pixel extraction)
-- Vitest (Engine unit testing)
+## How it works
+1. Capture: photo with a gray/white reference patch (20% region) and test spot (65% region), sampled on a hidden canvas.
+2. Calibration: per-channel white balance against the reference patch.
+3. Classification: CIEDE2000 distance to positive/negative reference colors for the selected reagent.
+4. Integrity: SHA-256 of the image; GPS and timestamps stored with the record.
+5. Sync: `POST /api/v1/tests/sync` writes to Postgres via Prisma.
+6. Threat alerts: `npm run scrape` (openFDA etc., robots.txt + rate-limit aware) writes `data/threat_alerts.json`.
 
 ## Setup
 1. `npm install`
-2. `npx prisma db push`
-3. `npm run dev`
+2. Set `DATABASE_URL` and `DIRECT_URL` (Postgres/Supabase) in `.env`
+3. `npx prisma db push`
+4. `npm run dev`
+5. `npm test`

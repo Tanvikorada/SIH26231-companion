@@ -15,7 +15,7 @@
   },
   {
     "reagent": "Ferric",
-    "drug": "Sulfate Morphine Sulfate",
+    "drug": "Morphine Sulfate",
     "positive_rgb": [
       129,
       127,
@@ -29,7 +29,7 @@
   },
   {
     "reagent": "Nitric",
-    "drug": "Acid Morphine Sulfate",
+    "drug": "Morphine Sulfate",
     "positive_rgb": [
       190,
       109,
@@ -57,7 +57,7 @@
   },
   {
     "reagent": "Ferric",
-    "drug": "Sulfate Codeine",
+    "drug": "Codeine",
     "positive_rgb": [
       181,
       159,
@@ -71,7 +71,7 @@
   },
   {
     "reagent": "Nitric",
-    "drug": "Acid Codeine",
+    "drug": "Codeine",
     "positive_rgb": [
       184,
       184,
@@ -99,7 +99,7 @@
   },
   {
     "reagent": "Ferric",
-    "drug": "Sulfate Heroin",
+    "drug": "Heroin",
     "positive_rgb": [
       161,
       151,
@@ -113,7 +113,7 @@
   },
   {
     "reagent": "Nitric",
-    "drug": "Acid Heroin",
+    "drug": "Heroin",
     "positive_rgb": [
       191,
       186,
@@ -141,7 +141,7 @@
   },
   {
     "reagent": "Cobalt",
-    "drug": "Thiocyanate Cocaine HCl",
+    "drug": "Cocaine HCl",
     "positive_rgb": [
       2,
       65,
@@ -183,7 +183,7 @@
   },
   {
     "reagent": "Chen",
-    "drug": "Kao Cathine",
+    "drug": "Cathine",
     "positive_rgb": [
       133,
       133,
@@ -211,7 +211,7 @@
   },
   {
     "reagent": "Ferric",
-    "drug": "Sulfate Opium",
+    "drug": "Opium",
     "positive_rgb": [
       173,
       153,
@@ -253,7 +253,7 @@
   },
   {
     "reagent": "Sulfuric",
-    "drug": "Acid Amphetamine",
+    "drug": "Amphetamine",
     "positive_rgb": [
       180,
       170,
@@ -267,7 +267,7 @@
   },
   {
     "reagent": "Simon",
-    "drug": "Test Amphetamine",
+    "drug": "Amphetamine",
     "positive_rgb": [
       190,
       163,
@@ -295,7 +295,7 @@
   },
   {
     "reagent": "Sulfuric",
-    "drug": "Acid Methamphetamine",
+    "drug": "Methamphetamine",
     "positive_rgb": [
       178,
       168,
@@ -309,7 +309,7 @@
   },
   {
     "reagent": "Simon",
-    "drug": "Test Methamphetamine",
+    "drug": "Methamphetamine",
     "positive_rgb": [
       198,
       180,
@@ -421,7 +421,7 @@
   },
   {
     "reagent": "Cobalt",
-    "drug": "Thiocyanate PCP",
+    "drug": "PCP",
     "positive_rgb": [
       27,
       90,

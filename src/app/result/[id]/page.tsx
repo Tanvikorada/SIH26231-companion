@@ -118,9 +118,14 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
                 </span>
               </div>
               <div className="mt-4 text-xs font-bold border border-gray-300 bg-white px-4 py-1">
-                Confidence Level: HIGH
+                Confidence Level: {String(data.confidence ?? "unknown").toUpperCase()}
               </div>
             </div>
+
+            <p className="mt-6 border border-[#FF9933] bg-orange-50 p-3 text-xs font-bold text-gray-900">
+              PRESUMPTIVE SCREENING RESULT ONLY. Colorimetric tests are non-specific and do not identify a substance.
+              Not admissible as proof of a controlled substance; confirm by laboratory analysis (GC-MS / FTIR).
+            </p>
 
             {/* Electronic Signature Block */}
             <div className="mt-12 flex justify-end">
