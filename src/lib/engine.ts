@@ -130,7 +130,9 @@ export function isCalibrated(rawWhite: number[]) {
 }
 
 // Confidence from distance to the matched reference color, and whether a usable white reference existed.
-export function assessConfidence(result: string, distance: number, calibrated: boolean): "high" | "estimated" | "low" {
+export function assessConfidence(result: string, distance: number, calibrated: boolean, autoDetected = false): "high" | "estimated" | "low" {
   if (result === "inconclusive" || !calibrated) return "low";
+  // Without a physical reference card the illuminant is only estimated, so never report "high".
+  if (autoDetected) return distance < 5 ? "estimated" : "low";
   return distance < 5 ? "high" : "estimated";
 }

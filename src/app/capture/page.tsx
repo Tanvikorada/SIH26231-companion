@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Camera, MapPin, Loader2, CheckCircle, Scan, FileCode2, Crosshair, Cpu } from "lucide-react";
 import { classifySpotTest, calibrateColor, generateSHA256, isCalibrated, assessConfidence } from "@/lib/engine";
+import { autoDetectSpot } from "@/lib/autodetect";
 import { toast } from "sonner";
 
 export default function CapturePage() {
@@ -15,6 +16,7 @@ export default function CapturePage() {
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [reagent, setReagent] = useState("Auto-Detect (Lateral Flow)");
   const [notes, setNotes] = useState("");
+  const [useReference, setUseReference] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -58,6 +60,7 @@ export default function CapturePage() {
     if (!imageFile || !previewUrl) return toast.error("Evidence photograph required.");
 
     try {
+      let autoWhiteReliable = true;
       setProcessingState("EXTRACTING"); await sleep(500);
       const img = new Image(); img.src = previewUrl; await new Promise((resolve) => (img.onload = resolve));
       const canvas = canvasRef.current; if (!canvas) throw new Error("Canvas missing");
@@ -65,14 +68,25 @@ export default function CapturePage() {
       const ctx = canvas.getContext("2d", { willReadFrequently: true }); if (!ctx) throw new Error("Canvas context missing");
       ctx.drawImage(img, 0, 0);
 
-      const rawWhite = extractColor(ctx, Math.floor(img.width * 0.20), Math.floor(img.height * 0.50));
-      const rawSpot = extractColor(ctx, Math.floor(img.width * 0.65), Math.floor(img.height * 0.50));
+      let rawWhite: number[];
+      let rawSpot: number[];
+      if (useReference) {
+        rawWhite = extractColor(ctx, Math.floor(img.width * 0.20), Math.floor(img.height * 0.50));
+        rawSpot = extractColor(ctx, Math.floor(img.width * 0.65), Math.floor(img.height * 0.50));
+      } else {
+        const id = ctx.getImageData(0, 0, img.width, img.height);
+        const det = autoDetectSpot({ data: id.data, width: id.width, height: id.height, channels: 4 });
+        if (!det) throw new Error("Could not locate the reagent spot. Use a white surface around the spot, or enable the reference card.");
+        rawWhite = det.white;
+        rawSpot = det.spot;
+        autoWhiteReliable = det.whiteReliable;
+      }
 
       setProcessingState("MATH"); await sleep(700);
       const finalColor = calibrateColor(rawSpot, rawWhite);
       const classification = classifySpotTest(finalColor, reagent);
-      const calibrated = isCalibrated(rawWhite);
-      const confidence = assessConfidence(classification.result, classification.distance, calibrated);
+      const calibrated = isCalibrated(rawWhite) && autoWhiteReliable;
+      const confidence = assessConfidence(classification.result, classification.distance, calibrated, !useReference);
 
       setProcessingState("HASHING"); await sleep(600);
       const arrayBuffer = await imageFile.arrayBuffer();
@@ -86,7 +100,7 @@ export default function CapturePage() {
           operator_id: "NCB-OP-109", reagent, notes,
           gps_lat: location?.lat || null, gps_lng: location?.lng || null,
           captured_at: new Date().toISOString(), image_hash, base64Image,
-          result: classification.result, confidence, calibration_status: calibrated ? "calibrated" : "uncalibrated"
+          result: classification.result, confidence, calibration_status: !calibrated ? "uncalibrated" : useReference ? "calibrated" : "estimated"
         }),
       });
 
@@ -174,6 +188,20 @@ export default function CapturePage() {
                   </select>
                   <Scan className="absolute right-4 top-3 w-5 h-5 text-gray-500 pointer-events-none" />
                 </div>
+              </div>
+
+              <div className="border border-gray-300 bg-gray-50 p-3">
+                <label className="flex items-start gap-3 text-sm font-bold text-gray-900 cursor-pointer">
+                  <input type="checkbox" checked={useReference} onChange={(e) => setUseReference(e.target.checked)} className="mt-1 w-4 h-4" />
+                  <span>
+                    White reference card in frame (recommended)
+                    <span className="block text-xs font-normal text-gray-700 mt-1">
+                      {useReference
+                        ? "Card centred at 20% width, spot at 65% width. Most accurate."
+                        : "No card: lighting is estimated from the brightest surface and the spot is auto-located. Spot must sit on a white plate or paper. Lower accuracy; confidence is capped."}
+                    </span>
+                  </span>
+                </label>
               </div>
 
               <div>

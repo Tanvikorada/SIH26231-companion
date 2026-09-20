@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
         captured_at: new Date(data.captured_at),
         result: data.result,
         confidence: data.confidence,
-        calibration_status: data.calibration_status === "uncalibrated" ? "uncalibrated" : "calibrated",
+        calibration_status: ["uncalibrated", "estimated"].includes(data.calibration_status) ? data.calibration_status : "calibrated",
         notes: data.notes || `Reagent: ${data.reagent}`
       }
     });
