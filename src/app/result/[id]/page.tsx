@@ -8,12 +8,17 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
   const router = useRouter();
   const { id } = use(params);
   const [data, setData] = useState<any>(null);
+  const [ver, setVer] = useState<any>(null);
 
   useEffect(() => {
     fetch(`/api/v1/tests/${id}`)
       .then(res => res.json())
-      .then(d => setData(d))
+      .then(d => {
+        if (d.error) { window.location.href = "/login?next=/result/" + id; return; }
+        setData(d);
+      })
       .catch(console.error);
+    fetch("/api/v1/verify/" + id).then(r => r.json()).then(setVer).catch(() => {});
   }, [id]);
 
   if (!data) return (
@@ -62,7 +67,7 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
               <h3 className="text-sm text-gray-600 mt-1">Narcotics Control Bureau - Field Analysis Report</h3>
             </div>
             <div className="text-right shrink-0 flex flex-col items-end">
-              <div className="text-[10px] text-gray-500 font-bold mb-1">Form 4A - Generated via NIC</div>
+              <div className="text-[10px] text-gray-500 font-bold mb-1">Form 4A - NCB Digital Companion</div>
             </div>
           </div>
 
@@ -85,11 +90,15 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
                 </tr>
                 <tr className="border-b border-gray-300">
                   <td className="p-3 bg-gray-50 font-bold w-1/3 border-r border-gray-300">Reagent Used</td>
-                  <td className="p-3 font-bold">{data.reagent}</td>
+                  <td className="p-3 font-bold">{data.reagent ?? (data.notes || "").replace(/^.*Reagent: /, "") ?? "-"}</td>
                 </tr>
                 <tr className="border-b border-gray-300">
                   <td className="p-3 bg-gray-50 font-bold w-1/3 border-r border-gray-300">Date & Time of Capture</td>
-                  <td className="p-3">{new Date(data.captured_at).toLocaleString('en-IN')}</td>
+                  <td className="p-3">{new Date(data.captured_at).toLocaleString('en-IN')} <span className="text-[10px] text-gray-500">(device clock)</span></td>
+                </tr>
+                <tr className="border-b border-gray-300">
+                  <td className="p-3 bg-gray-50 font-bold w-1/3 border-r border-gray-300">Recorded by Server</td>
+                  <td className="p-3">{new Date(data.recorded_at).toLocaleString('en-IN')} <span className="text-[10px] text-gray-500">(server clock, signed)</span></td>
                 </tr>
                 <tr className="border-b border-gray-300">
                   <td className="p-3 bg-gray-50 font-bold w-1/3 border-r border-gray-300">Operator ID</td>
@@ -98,7 +107,7 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
                 <tr className="border-b border-gray-300">
                   <td className="p-3 bg-gray-50 font-bold w-1/3 border-r border-gray-300">GPS Coordinates</td>
                   <td className="p-3">
-                    {data.gps_lat ? `${data.gps_lat.toFixed(6)}, ${data.gps_lng.toFixed(6)}` : "Location Not Recorded"}
+                    {data.gps_lat != null ? `${data.gps_lat.toFixed(6)}, ${data.gps_lng.toFixed(6)}` : <span className="font-bold text-red-700">GPS NOT RECORDED - location could not be verified</span>}
                   </td>
                 </tr>
                 <tr className="border-b border-gray-300">
@@ -118,7 +127,7 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
                 </span>
               </div>
               <div className="mt-4 text-xs font-bold border border-gray-300 bg-white px-4 py-1">
-                Confidence Level: {String(data.confidence ?? "unknown").toUpperCase()}
+                Confidence Level: {String(data.confidence ?? "unknown").toUpperCase()}{data.calibration_status && data.calibration_status !== "calibrated" ? ` (${data.calibration_status})` : ""}
               </div>
             </div>
 
@@ -127,18 +136,22 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
               Not admissible as proof of a controlled substance; confirm by laboratory analysis (GC-MS / FTIR).
             </p>
 
-            {/* Electronic Signature Block */}
-            <div className="mt-12 flex justify-end">
-              <div className="border-2 border-[#003366] p-3 text-[9px] text-[#003366] w-64 bg-blue-50">
-                <div className="font-bold flex justify-between border-b border-[#003366] pb-1 mb-2">
-                  <span>Cryptographic Signature Valid</span>
-                  <Check size={12} />
-                </div>
-                <div>Digitally signed by Edge Node</div>
-                <div>Date: {new Date(data.captured_at).toLocaleDateString('en-IN')}</div>
+            {data.image_path && (
+              <div className="mt-6">
+                <h5 className="text-xs font-bold text-gray-600 uppercase tracking-widest mb-2">Evidence Image (as hashed)</h5>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={data.image_path} alt="Captured test evidence" className="max-h-64 border border-gray-300" />
               </div>
-            </div>
+            )}
 
+            <div className={`mt-8 border-2 p-3 text-xs ${ver?.status === "valid" ? "border-green-700 bg-green-50 text-green-900" : ver?.status === "invalid" ? "border-red-700 bg-red-50 text-red-900" : "border-gray-400 bg-gray-50 text-gray-800"}`}>
+              <div className="font-bold flex items-center gap-2 border-b border-current pb-1 mb-2">
+                {ver?.status === "valid" ? <ShieldCheck size={14} /> : <ShieldAlert size={14} />}
+                {!ver ? "Verifying digital signature..." : ver.status === "valid" ? "Digital signature verified (Ed25519, server-signed, chained)" : ver.status === "invalid" ? "SIGNATURE CHECK FAILED - record may have been altered" : "Unsigned legacy record (not tamper-evident)"}
+              </div>
+              {data.record_hash && <div className="font-mono break-all">Record hash: {data.record_hash}</div>}
+              <div className="mt-1">Sequence #{data.seq} - <a className="underline font-bold" href={"/verify/" + data.id}>Open public verification page</a></div>
+            </div>
           </div>
         </div>
       </div>

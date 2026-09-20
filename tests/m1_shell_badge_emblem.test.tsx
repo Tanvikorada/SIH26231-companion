@@ -259,7 +259,7 @@ describe("Milestone 1: RootLayout & GIGW 3.0 Shell Verification", () => {
     expect(html).toContain("NDPS Act 1985");
     expect(html).toContain("Website Policies");
     expect(html).toContain("Guidelines for Indian Govt. Websites (GIGW 3.0)");
-    expect(html).toContain("National Informatics Centre (NIC)");
+    expect(html).toContain("Not an official Government of India service");
   });
 
   it("ensures root layout contains no glassmorphism or background noise", () => {

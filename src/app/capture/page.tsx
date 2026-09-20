@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Camera, MapPin, Loader2, CheckCircle, Scan, FileCode2, Crosshair, Cpu } from "lucide-react";
@@ -18,8 +18,16 @@ export default function CapturePage() {
   const [reagent, setReagent] = useState("Auto-Detect (Lateral Flow)");
   const [notes, setNotes] = useState("");
   const [useReference, setUseReference] = useState(true);
+  const [operator, setOperator] = useState<{ operator_id: string; name: string } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    fetch("/api/v1/auth/me").then((r) => (r.ok ? r.json() : null)).then((d) => { if (d) setOperator(d); else window.location.href = "/login?next=/capture"; }).catch(() => {});
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition((pos) => setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }), () => {}, { enableHighAccuracy: true, timeout: 15000 });
+    }
+  }, []);
 
   const fetchGPS = () => {
     toast.promise(
@@ -106,22 +114,40 @@ export default function CapturePage() {
       }
 
       setProcessingState("HASHING"); await sleep(600);
-      const arrayBuffer = await imageFile.arrayBuffer();
-      const image_hash = await generateSHA256(arrayBuffer);
-      const base64Image = canvas.toDataURL("image/jpeg", 0.5);
+      // The evidence image is the exact JPEG we upload: hash those bytes so the server can re-verify them.
+      const maxSide = 1600;
+      const k = Math.min(1, maxSide / Math.max(canvas.width, canvas.height));
+      const ev = document.createElement("canvas");
+      ev.width = Math.round(canvas.width * k);
+      ev.height = Math.round(canvas.height * k);
+      ev.getContext("2d")!.drawImage(canvas, 0, 0, ev.width, ev.height);
+      const base64Image = ev.toDataURL("image/jpeg", 0.85);
+      const raw = atob(base64Image.split(",")[1]);
+      const evBytes = new Uint8Array(raw.length);
+      for (let i = 0; i < raw.length; i++) evBytes[i] = raw.charCodeAt(i);
+      const image_hash = await generateSHA256(evBytes.buffer);
+
+      let gps = location;
+      if (!gps && "geolocation" in navigator) {
+        gps = await new Promise<{ lat: number; lng: number } | null>((resolve) =>
+          navigator.geolocation.getCurrentPosition((pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }), () => resolve(null), { enableHighAccuracy: true, timeout: 8000 })
+        );
+      }
+      if (!gps) toast.warning("GPS unavailable: the record will be flagged as having no location.");
 
       setProcessingState("SYNCING");
       const res = await fetch("/api/v1/tests/sync", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          operator_id: "NCB-OP-109", reagent, notes: [notes, lfNotes].filter(Boolean).join(" | ") || undefined,
-          gps_lat: location?.lat || null, gps_lng: location?.lng || null,
+          reagent, notes: [notes, lfNotes].filter(Boolean).join(" | ") || undefined,
+          gps_lat: gps?.lat ?? null, gps_lng: gps?.lng ?? null,
           captured_at: new Date().toISOString(), image_hash, base64Image,
           result: classification.result, confidence, calibration_status: !calibrated ? "uncalibrated" : useReference || lfResult ? "calibrated" : "estimated"
         }),
       });
 
       const data = await res.json();
+      if (res.status === 401) { window.location.href = "/login?next=/capture"; return; }
       if (res.ok) {
         setProcessingState("SUCCESS"); toast.success("Analysis Complete");
         await sleep(400); router.push(`/result/${data.id}`);
@@ -190,6 +216,10 @@ export default function CapturePage() {
               2. Test Parameters
             </div>
             <div className="p-4 space-y-5">
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Operator (record is signed under this ID)</label>
+                <input type="text" disabled value={operator ? `${operator.operator_id} - ${operator.name}` : "Checking sign-in..."} className="w-full bg-gray-100 border border-gray-300 px-4 py-3 text-sm text-gray-700 font-mono" />
+              </div>
               <div>
                 <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Reagent Profile</label>
                 <div className="relative">

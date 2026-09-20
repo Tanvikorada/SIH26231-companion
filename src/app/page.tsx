@@ -128,9 +128,9 @@ export default function LoginPage() {
             </div>
           </div>
           <p className="text-[10px] text-center text-gray-500 leading-tight">
-            Designed, Developed and Hosted by<br/>
-            <strong>National Informatics Centre (NIC)</strong><br/>
-            Ministry of Electronics & Information Technology, Government of India
+            Prototype developed for Smart India Hackathon 2026<br/>
+            <strong>Problem Statement 26231 - Narcotics Control Bureau</strong><br/>
+            Not an official Government of India service
           </p>
         </div>
       </footer>

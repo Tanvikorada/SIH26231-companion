@@ -21,4 +21,13 @@ model Test {
   confidence         String
   calibration_status String
   notes              String?
+  reagent            String?
+  seq                Int      @unique @default(autoincrement())
+  prev_hash          String?
+  record_hash        String?  @unique
+  signature          String?
+  sig_version        Int?
+
+  @@index([operator_id])
+  @@index([captured_at])
 }

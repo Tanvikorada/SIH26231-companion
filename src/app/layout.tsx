@@ -1,3 +1,4 @@
+import { SignOutButton } from "@/components/ui/SignOutButton";
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import Script from "next/script";
@@ -263,7 +264,8 @@ export default function RootLayout({
                     className="inline-block w-2 h-2 bg-[#138808]"
                     aria-hidden="true"
                   />
-                  <span>STQC SECURED | RESTRICTED ACCESS</span>
+                  <span>RESTRICTED ACCESS | SIGNED RECORDS</span>
+                  <SignOutButton />
                 </div>
               </div>
 
@@ -414,11 +416,11 @@ export default function RootLayout({
                   </li>
                   <li className="flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 bg-[#138808]" aria-hidden="true" />
-                    <span>STQC Certified Cyber Architecture</span>
+                    <span>Ed25519 signed, hash-chained records</span>
                   </li>
                   <li className="flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 bg-[#FF9933]" aria-hidden="true" />
-                    <span>FIPS 180-4 Cryptographic Hash Validation</span>
+                    <span>SHA-256 (FIPS 180-4) evidence hashing</span>
                   </li>
                 </ul>
               </div>
@@ -439,8 +441,8 @@ export default function RootLayout({
                   Free)
                 </p>
                 <p className="text-slate-300">
-                  <strong className="text-white">NIC Support Desk:</strong>{" "}
-                  support-forensic@nic.in
+                  <strong className="text-white">Prototype:</strong>{" "}
+                  Smart India Hackathon 2026, PS 26231
                 </p>
               </div>
             </div>
@@ -455,11 +457,8 @@ export default function RootLayout({
                   India. All Rights Reserved.
                 </p>
                 <p className="text-[10px] text-slate-500">
-                  Designed, Developed and Hosted by{" "}
-                  <strong className="text-slate-300">
-                    National Informatics Centre (NIC)
-                  </strong>
-                  .
+                  Prototype developed for Smart India Hackathon 2026 (Problem Statement 26231).
+                  Not an official Government of India service.
                 </p>
               </div>
               <div className="text-right">
