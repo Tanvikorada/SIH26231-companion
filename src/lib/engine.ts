@@ -124,3 +124,13 @@ export async function generateSHA256(buffer: ArrayBuffer) {
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
 }
+
+export function isCalibrated(rawWhite: number[]) {
+  return rawWhite[0] * 0.299 + rawWhite[1] * 0.587 + rawWhite[2] * 0.114 >= 20;
+}
+
+// Confidence from distance to the matched reference color, and whether a usable white reference existed.
+export function assessConfidence(result: string, distance: number, calibrated: boolean): "high" | "estimated" | "low" {
+  if (result === "inconclusive" || !calibrated) return "low";
+  return distance < 5 ? "high" : "estimated";
+}

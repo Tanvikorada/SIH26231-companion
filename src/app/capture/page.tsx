@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Camera, MapPin, Loader2, CheckCircle, Scan, FileCode2, Crosshair, Cpu } from "lucide-react";
-import { classifySpotTest, calibrateColor, generateSHA256 } from "@/lib/engine";
+import { classifySpotTest, calibrateColor, generateSHA256, isCalibrated, assessConfidence } from "@/lib/engine";
 import { toast } from "sonner";
 
 export default function CapturePage() {
@@ -51,7 +51,7 @@ export default function CapturePage() {
     return [Math.round(r / count), Math.round(g / count), Math.round(b / count)];
   };
 
-  const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+  const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, Math.min(ms, 150)));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,6 +71,8 @@ export default function CapturePage() {
       setProcessingState("MATH"); await sleep(700);
       const finalColor = calibrateColor(rawSpot, rawWhite);
       const classification = classifySpotTest(finalColor, reagent);
+      const calibrated = isCalibrated(rawWhite);
+      const confidence = assessConfidence(classification.result, classification.distance, calibrated);
 
       setProcessingState("HASHING"); await sleep(600);
       const arrayBuffer = await imageFile.arrayBuffer();
@@ -84,7 +86,7 @@ export default function CapturePage() {
           operator_id: "NCB-OP-109", reagent, notes,
           gps_lat: location?.lat || null, gps_lng: location?.lng || null,
           captured_at: new Date().toISOString(), image_hash, base64Image,
-          result: classification.result, confidence: "high"
+          result: classification.result, confidence, calibration_status: calibrated ? "calibrated" : "uncalibrated"
         }),
       });
 
