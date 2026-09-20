@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowLeft, Camera, MapPin, Loader2, CheckCircle, Scan, FileCode2, Crosshair, Cpu } from "lucide-react";
 import { classifySpotTest, calibrateColor, generateSHA256, isCalibrated, assessConfidence } from "@/lib/engine";
 import { autoDetectSpot } from "@/lib/autodetect";
+import { analyzeLateralFlow } from "@/lib/lateralflow";
 import { toast } from "sonner";
 
 export default function CapturePage() {
@@ -68,9 +69,15 @@ export default function CapturePage() {
       const ctx = canvas.getContext("2d", { willReadFrequently: true }); if (!ctx) throw new Error("Canvas context missing");
       ctx.drawImage(img, 0, 0);
 
-      let rawWhite: number[];
-      let rawSpot: number[];
-      if (useReference) {
+      const isLateralFlow = reagent === "Auto-Detect (Lateral Flow)";
+      let lfResult: ReturnType<typeof analyzeLateralFlow> = null;
+      let rawWhite: number[] = [255, 255, 255];
+      let rawSpot: number[] = [0, 0, 0];
+      if (isLateralFlow) {
+        const id = ctx.getImageData(0, 0, img.width, img.height);
+        lfResult = analyzeLateralFlow({ data: id.data, width: id.width, height: id.height, channels: 4 });
+        if (!lfResult) throw new Error("No test lines found. Frame the strip window(s) with the C end at the top, in good light.");
+      } else if (useReference) {
         rawWhite = extractColor(ctx, Math.floor(img.width * 0.20), Math.floor(img.height * 0.50));
         rawSpot = extractColor(ctx, Math.floor(img.width * 0.65), Math.floor(img.height * 0.50));
       } else {
@@ -83,10 +90,20 @@ export default function CapturePage() {
       }
 
       setProcessingState("MATH"); await sleep(700);
-      const finalColor = calibrateColor(rawSpot, rawWhite);
-      const classification = classifySpotTest(finalColor, reagent);
-      const calibrated = isCalibrated(rawWhite) && autoWhiteReliable;
-      const confidence = assessConfidence(classification.result, classification.distance, calibrated, !useReference);
+      let classification: { result: string; distance: number };
+      let calibrated = true;
+      let confidence: string;
+      let lfNotes = "";
+      if (lfResult) {
+        classification = { result: lfResult.result, distance: 0 };
+        confidence = lfResult.result === "inconclusive" ? "low" : "high";
+        lfNotes = "Panels: " + lfResult.panels.map((p) => p.index + "=" + p.verdict.toUpperCase()).join(", ");
+      } else {
+        const finalColor = calibrateColor(rawSpot, rawWhite);
+        classification = classifySpotTest(finalColor, reagent);
+        calibrated = isCalibrated(rawWhite) && autoWhiteReliable;
+        confidence = assessConfidence(classification.result, classification.distance, calibrated, !useReference);
+      }
 
       setProcessingState("HASHING"); await sleep(600);
       const arrayBuffer = await imageFile.arrayBuffer();
@@ -97,10 +114,10 @@ export default function CapturePage() {
       const res = await fetch("/api/v1/tests/sync", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          operator_id: "NCB-OP-109", reagent, notes,
+          operator_id: "NCB-OP-109", reagent, notes: [notes, lfNotes].filter(Boolean).join(" | ") || undefined,
           gps_lat: location?.lat || null, gps_lng: location?.lng || null,
           captured_at: new Date().toISOString(), image_hash, base64Image,
-          result: classification.result, confidence, calibration_status: !calibrated ? "uncalibrated" : useReference ? "calibrated" : "estimated"
+          result: classification.result, confidence, calibration_status: !calibrated ? "uncalibrated" : useReference || lfResult ? "calibrated" : "estimated"
         }),
       });
 
@@ -177,7 +194,7 @@ export default function CapturePage() {
                 <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Reagent Profile</label>
                 <div className="relative">
                   <select value={reagent} onChange={(e) => setReagent(e.target.value)} className="w-full appearance-none bg-white border border-gray-400 text-gray-900 px-4 py-3 text-sm font-bold focus:outline-none focus:border-[#003366] focus:ring-1 focus:ring-[#003366]">
-                    <option value="Auto-Detect (Lateral Flow)">Auto-Detect (Lateral Flow)</option>
+                    <option value="Auto-Detect (Lateral Flow)">Test cup / strip (C and T lines)</option>
                     <option value="Marquis">Marquis Reagent</option>
                     <option value="Ferric">Ferric Sulfate</option>
                     <option value="Nitric">Nitric Acid</option>
@@ -190,6 +207,12 @@ export default function CapturePage() {
                 </div>
               </div>
 
+              {reagent === "Auto-Detect (Lateral Flow)" ? (
+                <div className="border border-gray-300 bg-gray-50 p-3 text-xs text-gray-800">
+                  <b>Lateral-flow reading:</b> two lines (C + T) = negative; control line only = positive; no control line = invalid.
+                  Hold the cup with the <b>C end at the top</b>. Line darkness is ignored. Read within the kit time window (about 5 minutes).
+                </div>
+              ) : (
               <div className="border border-gray-300 bg-gray-50 p-3">
                 <label className="flex items-start gap-3 text-sm font-bold text-gray-900 cursor-pointer">
                   <input type="checkbox" checked={useReference} onChange={(e) => setUseReference(e.target.checked)} className="mt-1 w-4 h-4" />
@@ -203,6 +226,7 @@ export default function CapturePage() {
                   </span>
                 </label>
               </div>
+              )}
 
               <div>
                 <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Subject Notes (Optional)</label>

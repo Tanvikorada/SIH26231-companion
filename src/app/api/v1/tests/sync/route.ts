@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
         result: data.result,
         confidence: data.confidence,
         calibration_status: ["uncalibrated", "estimated"].includes(data.calibration_status) ? data.calibration_status : "calibrated",
-        notes: data.notes || `Reagent: ${data.reagent}`
+        notes: [data.notes, `Reagent: ${data.reagent}`].filter(Boolean).join(" | ")
       }
     });
 

@@ -8,6 +8,11 @@ Mobile-first PWA (Next.js 16, React 19, Tailwind v4) that photographs a colorime
 - The classifier returns positive/negative/inconclusive per **reagent**, not an identified drug.
 - No accuracy study (sensitivity/specificity, false-positive rate) has been done.
 
+## Supported kit formats
+- **Reagent spot tests** (Marquis, Cobalt Thiocyanate, Wagner, ...): colour of the reagent drop vs reference colours. Best with a white reference card in frame; a reference-free mode estimates lighting from the white plate/paper and is capped at "estimated" confidence.
+- **Lateral-flow test cups / strips**: reads control (C) and test (T) lines per panel. C+T = negative, C only = positive, no C = invalid; line darkness is ignored. Hold the cup with the C end at the top.
+- Not yet supported: NIK-style sealed ampoule pouches (multi-stage colour sequences read within ~60 s).
+
 ## How it works
 1. Capture: photo with a gray/white reference patch (20% region) and test spot (65% region), sampled on a hidden canvas.
 2. Calibration: per-channel white balance against the reference patch.
