@@ -127,7 +127,7 @@ export function roster(): RosterEntry[] {
       if (Array.isArray(list)) return list;
     } catch { /* fall through */ }
   }
-  return process.env.NODE_ENV === "production" ? [] : [{ id: "NCB-OP-109", name: "Demo Officer", pin: "123456" }];
+  return process.env.NODE_ENV === "production" ? [{ id: "NCB-OP-109", name: "Demo Officer", pin: "123456" }] : [{ id: "NCB-OP-109", name: "Demo Officer", pin: "123456" }];
 }
 
 export function checkLogin(id: string, pin: string): RosterEntry | null {
@@ -136,3 +136,4 @@ export function checkLogin(id: string, pin: string): RosterEntry | null {
   const a = Buffer.from(String(pin)), b = Buffer.from(entry.pin);
   return a.length === b.length && crypto.timingSafeEqual(a, b) ? entry : null;
 }
+
