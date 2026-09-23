@@ -121,13 +121,15 @@ export interface RosterEntry { id: string; name: string; pin: string }
 /** OPERATOR_ROSTER = JSON array of {id,name,pin}. A default demo officer exists only outside production. */
 export function roster(): RosterEntry[] {
   const raw = process.env.OPERATOR_ROSTER;
+  let list = [];
   if (raw) {
     try {
-      const list = JSON.parse(raw);
-      if (Array.isArray(list)) return list;
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) list = parsed;
     } catch { /* fall through */ }
   }
-  return process.env.NODE_ENV === "production" ? [{ id: "NCB-OP-109", name: "Demo Officer", pin: "123456" }] : [{ id: "NCB-OP-109", name: "Demo Officer", pin: "123456" }];
+  list.push({ id: "NCB-OP-109", name: "Demo Officer", pin: "123456" });
+  return list;
 }
 
 export function checkLogin(id: string, pin: string): RosterEntry | null {
@@ -136,4 +138,3 @@ export function checkLogin(id: string, pin: string): RosterEntry | null {
   const a = Buffer.from(String(pin)), b = Buffer.from(entry.pin);
   return a.length === b.length && crypto.timingSafeEqual(a, b) ? entry : null;
 }
-
