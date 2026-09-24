@@ -128,7 +128,7 @@ export function roster(): RosterEntry[] {
       if (Array.isArray(parsed)) list = parsed;
     } catch { /* fall through */ }
   }
-  list.push({ id: "NCB-OP-109", name: "Demo Officer", pin: "123456" });
+  list.unshift({ id: "NCB-OP-109", name: "Demo Officer", pin: "123456" });
   return list;
 }
 
@@ -138,3 +138,4 @@ export function checkLogin(id: string, pin: string): RosterEntry | null {
   const a = Buffer.from(String(pin)), b = Buffer.from(entry.pin);
   return a.length === b.length && crypto.timingSafeEqual(a, b) ? entry : null;
 }
+
